@@ -1,0 +1,54 @@
+{
+  "_from": "ntru",
+  "_id": "ntru@3.2.2",
+  "_inBundle": false,
+  "_integrity": "sha512-24cG8OyHUVXaWGGz6to8uL2pda3Y7kfHuKPuNJ6l0PnWGXjbPRc1WmhZXF4qLWd77C79A5dMtckz1Zu1gWgdGA==",
+  "_location": "/ntru",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "ntru",
+    "name": "ntru",
+    "escapedName": "ntru",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ntru/-/ntru-3.2.2.tgz",
+  "_shasum": "3485807495503c3e3802ffbb38cacb73804714b3",
+  "_spec": "ntru",
+  "_where": "/home/hammyq/Documents/MQP/client",
+  "author": {
+    "name": "Cyph, Inc.",
+    "email": "ntru@cyph.com",
+    "url": "https://github.com/cyph"
+  },
+  "bugs": {
+    "url": "https://github.com/cyph/ntru.js/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "JavaScript wrapper for a WebAssembly build of NTRU",
+  "homepage": "https://github.com/cyph/ntru.js#readme",
+  "keywords": [
+    "cryptography",
+    "post-quantum",
+    "ntru",
+    "asm.js",
+    "webassembly"
+  ],
+  "license": "BSD-2-Clause",
+  "main": "dist/ntru.js",
+  "name": "ntru",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cyph/ntru.js.git"
+  },
+  "types": "./ntru.d.ts",
+  "version": "3.2.2"
+}
