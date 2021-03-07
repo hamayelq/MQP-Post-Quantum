@@ -1,6 +1,6 @@
 # ntru.js
 
-This is an edited and updated version of the NTRU javascript implementation.
+This is an edited and updated version of Cyph's NTRU javascript implementation.
 
 It is being edited/updated to be used within a PWA communication platform for research purposes.
 
