@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
+import { useState } from "react";
 import "./App.css";
 import "ntru";
 import { ntru } from "ntru";
@@ -14,7 +13,7 @@ function App() {
   const [decoded, setDecoded] = useState("");
 
   const encryptAndDecrypt = async (plainText: string) => {
-    const keyPair /*: {privateKey: Uint8Array; publicKey: Uint8Array} */ = await ntru.keyPair();
+    const keyPair = await ntru.keyPair();
     const encodedArray = new TextEncoder().encode(plainText);
     const encrypted = await ntru.encrypt(encodedArray, keyPair.publicKey);
     const decrypted = await ntru.decrypt(encrypted, keyPair.privateKey); // same as plainText
@@ -25,22 +24,13 @@ function App() {
     setDecryptedArray(decrypted);
     setDecoded(decodedPlainText);
 
-    // setEncryptState({
-    //   plainText,
-    //   encodedArray,
-    //   encrypted,
-    //   decrypted,
-    //   decodedPlainText,
-    // });
-
-    // console.log("Key pair: ", keyPair);
-    // console.log("Plain text: ", plainText);
-    // console.log("Plain text encoded: ", encodedArray);
+    console.log("Key pair: ", keyPair);
+    console.log("Plain text: ", plainText);
+    console.log("Plain text encoded: ", encodedArray);
     console.log("Plain text encrypted: ", encrypted);
-    // console.log("Plain text decrypted: ", decrypted);
-    // console.log("Plain text decoded: ", decodedPlainText);
+    console.log("Plain text decrypted: ", decrypted);
+    console.log("Plain text decoded: ", decodedPlainText);
   };
-  // encryptAndDecrypt("hello");
 
   return (
     <div className="App">
