@@ -10,10 +10,19 @@ import { verify } from "jsonwebtoken";
 import { User } from "./entity/User";
 import { createAccessToken, createRefreshToken } from "./auth";
 import { sendRefreshToken } from "./sendRefreshToken";
+import cors from "cors";
 
 /* lambda function, logic to start server */
 (async () => {
   const app = express();
+
+  /* fixing cors shenanigans */
+  app.use(
+    cors({
+      origin: "http://172.27.76.249:3000",
+      credentials: true,
+    })
+  );
   app.use(cookieParser());
   app.get("/", (_req, res) => res.send("Hello\n")); // checking if express is working as expected
 
@@ -71,7 +80,7 @@ import { sendRefreshToken } from "./sendRefreshToken";
   });
 
   /* applying GraphQL to express server */
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.log("express server started\n");

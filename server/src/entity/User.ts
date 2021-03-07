@@ -13,6 +13,7 @@ export class User extends BaseEntity {
   email: string;
 
   // no @Field() here as to not expose password
+  @Field()
   @Column("text")
   password: string;
 

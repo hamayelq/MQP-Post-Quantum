@@ -1,17 +1,44 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ReactDOM from "react-dom";
+import "./index.css";
+import { Routes } from "./Routes";
+// import ApolloClient from "apollo-boost";
+import {
+  ApolloProvider,
+  ApolloLink,
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  concat,
+} from "@apollo/client";
+import { getAccessToken } from "./accessToken";
+
+const httpLink = new HttpLink({
+  uri: "http://172.27.76.249:4000/graphql",
+  credentials: "include",
+});
+
+const authMiddleware = new ApolloLink((operation, forward): any => {
+  const accessToken = getAccessToken();
+  if (accessToken) {
+    operation.setContext({
+      headers: {
+        authorization: `bearer ${accessToken}`,
+      },
+    });
+  }
+
+  return forward(operation);
+});
+
+const client = new ApolloClient({
+  link: concat(authMiddleware, httpLink),
+  // link: httpLink,
+  cache: new InMemoryCache(),
+});
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <ApolloProvider client={client}>
+    <Routes />
+  </ApolloProvider>,
+  document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
