@@ -1,4 +1,8 @@
-# Backend for LLLLL
+# Backend for Post Quantum Communication Application
+
+Currently working login and registration process with Postgres and GraphQL. Passwords are hashed using bcrypt. 
+
+Modelled slightly off of Ben Awad's login and registration process.
 
 Steps to run this project:
 
