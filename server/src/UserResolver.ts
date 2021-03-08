@@ -16,11 +16,14 @@ import { createAccessToken, createRefreshToken } from "./auth";
 import { isAuth } from "./isAuth";
 import { sendRefreshToken } from "./sendRefreshToken";
 import { getConnection } from "typeorm";
+import { verify } from "jsonwebtoken";
 
 @ObjectType()
 class LoginResponse {
   @Field()
   accessToken: string;
+  @Field(() => User)
+  user: User;
 }
 
 @Resolver()
@@ -30,16 +33,38 @@ export class UserResolver {
     return "hie :D";
   }
 
+  // bye!
   @Query(() => String)
   @UseMiddleware(isAuth)
   bye(@Ctx() { payload }: MyContext) {
-    console.log(payload);
-    return `your user id is: ${payload!.userId}`;
+    return `Your user id is: ${payload!.userId}`;
   }
 
+  // find users in db
   @Query(() => [User])
   users() {
     return User.find();
+  }
+
+  // return currently logged in user
+  @Query(() => User, { nullable: true })
+  me(@Ctx() context: MyContext) {
+    // console.log(context.req.headers.authorization);
+    const authorization = context.req.headers.authorization; // read header
+
+    if (!authorization) {
+      return null;
+    }
+
+    try {
+      const token = authorization.split(" ")[1]; // bearer, token (so token value)
+      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!); // verify token is correct
+      context.payload = payload as any; // set payload inside context
+      return User.findOne(payload.userId);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
   }
 
   // this is a bad idea, should do this in a function that can be called...
@@ -52,7 +77,7 @@ export class UserResolver {
     return true;
   }
 
-  /* mutations are created to update/create/change in DB */
+  // login a user
   @Mutation(() => LoginResponse) // returns LoginResponse
   async login(
     @Arg("email") email: string, // ('') name of graphQL arg, email = variable name, string = type
@@ -79,10 +104,19 @@ export class UserResolver {
 
     return {
       accessToken: createAccessToken(user),
+      user,
     };
   }
 
-  /* mutations are created to update/create/change in DB */
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { res }: MyContext) {
+    sendRefreshToken(res, "");
+    // or
+    // res.clearCookie
+    return true;
+  }
+
+  // register a user
   @Mutation(() => Boolean) // returns boolean, true worked
   async register(
     @Arg("email") email: string, // ('') name of graphQL arg, email = variable name, string = type

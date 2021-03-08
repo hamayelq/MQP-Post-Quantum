@@ -80,7 +80,7 @@ const Ntrutest: React.FC<Props> = () => {
                     {i} - {el}
                   </li>
                 ) : (
-                  i == 40 && <p>Open console for more...</p>
+                  i === 40 && <p>Open console for more...</p>
                 )
               )}
               <h4>

@@ -1,11 +1,12 @@
-import { access } from "fs";
+export let accessToken: string | null = "";
 
-export let accessToken = "";
+/* should be sticking this in state management library */
+/* and/or put this into localstorage */
 
-export const setAccessToken = (s: string) => {
+export const setAccessToken = (s: string | null) => {
   accessToken = s;
 };
 
 export const getAccessToken = () => {
-  return access;
+  return accessToken;
 };

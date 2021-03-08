@@ -1,44 +1,83 @@
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Routes } from "./Routes";
+import { setContext } from "@apollo/client/link/context";
 // import ApolloClient from "apollo-boost";
 import {
   ApolloProvider,
-  ApolloLink,
   ApolloClient,
   InMemoryCache,
   HttpLink,
-  concat,
+  from,
 } from "@apollo/client";
-import { getAccessToken } from "./accessToken";
+import { getAccessToken, setAccessToken } from "./accessToken";
+import { TokenRefreshLink } from "apollo-link-token-refresh";
+
+import App from "./App";
+import jwtDecode from "jwt-decode";
 
 const httpLink = new HttpLink({
-  uri: "http://172.27.76.249:4000/graphql",
+  uri: "http://localhost:4000/graphql",
   credentials: "include",
 });
 
-const authMiddleware = new ApolloLink((operation, forward): any => {
-  const accessToken = getAccessToken();
-  if (accessToken) {
-    operation.setContext({
-      headers: {
-        authorization: `bearer ${accessToken}`,
-      },
-    });
-  }
+const tokenRefreshLink = new TokenRefreshLink({
+  accessTokenField: "accessToken",
+  isTokenValidOrUndefined: () => {
+    const token = getAccessToken();
 
-  return forward(operation);
+    if (!token) {
+      return true;
+    }
+
+    try {
+      const { exp }: any = jwtDecode(token as any);
+
+      if (Date.now() >= exp * 1000) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      console.log("Error here...");
+      return false;
+    }
+  },
+  fetchAccessToken: () => {
+    return fetch("http://localhost:4000/refresh_token", {
+      method: "POST",
+      credentials: "include",
+    });
+  },
+  handleFetch: (accessToken) => {
+    setAccessToken(accessToken);
+  },
+  handleError: (err) => {
+    console.warn("Your refresh token is invalid. Try to relogin");
+    console.log(err);
+  },
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const accessToken = getAccessToken();
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: accessToken ? `Bearer ${accessToken}` : "",
+    },
+  };
 });
 
 const client = new ApolloClient({
-  link: concat(authMiddleware, httpLink),
-  // link: httpLink,
+  // @ts-ignore
+  link: from([tokenRefreshLink, authLink, httpLink]),
   cache: new InMemoryCache(),
 });
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <Routes />
+    <App />
   </ApolloProvider>,
   document.getElementById("root")
 );

@@ -19,51 +19,47 @@ import cors from "cors";
   /* fixing cors shenanigans */
   app.use(
     cors({
-      origin: "http://172.27.76.249:3000",
+      origin: "http://localhost:3000",
       credentials: true,
     })
   );
+
   app.use(cookieParser());
+
   app.get("/", (_req, res) => res.send("Hello\n")); // checking if express is working as expected
 
   /* cookie only works on this route, for security 
      purposes, sent only if refreshing */
   app.post("/refresh_token", async (req, res) => {
-    const token = req.cookies.tokenid;
+    console.log(req.cookies);
+    const token = req.cookies.jid;
+
     if (!token) {
       return res.send({ ok: false, accessToken: "" });
     }
 
-    /* check if token is valid/not expired */
     let payload: any = null;
     try {
       payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
-    } catch (err) {
-      // if error, return ok false :)
-      console.log(err);
+    } catch (e) {
+      console.log(e);
       return res.send({ ok: false, accessToken: "" });
     }
-
-    /* if here, we know token is valid and we can return
-     access token */
 
     const user = await User.findOne({ id: payload.userId });
 
-    /* just in case user isn't found */
+    console.log("payload:", payload);
+    console.log("USER:", user);
     if (!user) {
+      console.log("NO USER!");
       return res.send({ ok: false, accessToken: "" });
     }
 
-    /* if token version does not match payload token version
-       token is invalid. kind of like stack canaries? */
     if (user.tokenVersion !== payload.tokenVersion) {
+      console.log("TOKEN VERSION NOT MATCH!");
       return res.send({ ok: false, accessToken: "" });
     }
 
-    /* creates a new refresh token, might want to remove this
-       actually. want to make chat app as secure as possible.
-       perhaps we want to force the user to sign in again every
-       few minutes */
     sendRefreshToken(res, createRefreshToken(user));
 
     return res.send({ ok: true, accessToken: createAccessToken(user) });

@@ -3,12 +3,12 @@ import { useByeQuery } from "../../generated/graphql";
 
 interface ByeProps {}
 
-export const Bye: React.FC<ByeProps> = ({}) => {
-  const { data, loading, error } = useByeQuery();
+export const Bye: React.FC<ByeProps> = () => {
+  const { data, loading, error } = useByeQuery({ fetchPolicy: "network-only" });
 
   if (error) {
     console.log(error);
-    return <div>err</div>;
+    return <div>{JSON.stringify(error)}</div>;
   }
 
   if (loading) {

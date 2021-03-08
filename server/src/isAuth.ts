@@ -5,7 +5,8 @@ import { MyContext } from "./MyContext";
 // bearer - token
 
 export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
-  const authorization = context.req.headers["authorization"]; // read header
+  // console.log(context.req.headers.authorization);
+  const authorization = context.req.headers.authorization; // read header
 
   if (!authorization) {
     throw new Error("not authenticated!");
