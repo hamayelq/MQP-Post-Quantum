@@ -1,6 +1,6 @@
 # ntru.js
 
-This is an edited and updated version of the NTRU javascript implementation.
+This is my edited and updated version of an NTRU javascript implementation.
 
 It is being edited/updated to be used within a PWA communication platform for research purposes.
 
