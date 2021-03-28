@@ -34,12 +34,15 @@ export const Header: React.FC<HeaderProps> = ({}) => {
         <Link to="/login">login</Link>
       </div>
       <div>
+        <Link to="/logindemo">Login (updated)</Link>
+      </div>
+      <div>
         <Link to="/bye">bye</Link>
       </div>
       <div>
         <Link to="/ntru">ntru test</Link>
       </div>
-      <div>
+      {/* <div>
         {!loading && data && data.me && (
           <button
             onClick={async () => {
@@ -51,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({}) => {
             logout
           </button>
         )}
-      </div>
+      </div> */}
       {body}
     </header>
   );

@@ -1,5 +1,4 @@
 import "reflect-metadata";
-// import {createConnection} from "typeorm";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -31,7 +30,7 @@ import cors from "cors";
   /* cookie only works on this route, for security 
      purposes, sent only if refreshing */
   app.post("/refresh_token", async (req, res) => {
-    console.log(req.cookies);
+    console.log("refresh", req.cookies);
     const token = req.cookies.jid;
 
     if (!token) {

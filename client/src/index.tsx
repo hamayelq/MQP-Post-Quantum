@@ -11,6 +11,7 @@ import {
 } from "@apollo/client";
 import { getAccessToken, setAccessToken } from "./accessToken";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
+import { SettingsProvider } from "./contexts/SettingsContext";
 
 import App from "./App";
 import jwtDecode from "jwt-decode";
@@ -76,8 +77,10 @@ const client = new ApolloClient({
 });
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
+  <SettingsProvider>
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  </SettingsProvider>,
   document.getElementById("root")
 );

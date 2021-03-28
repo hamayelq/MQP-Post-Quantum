@@ -35,13 +35,6 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           const finalPass: string = new TextDecoder().decode(pass);
           console.log(finalPass);
 
-          // crypto.getCiphers();
-
-          // scrypt("asdasd", "salt", 32, (err, derivedKey) => {
-          //   if (err) throw err;
-          //   console.log(derivedKey.toString("hex"));
-          // });
-
           let response;
           try {
             response = await login({

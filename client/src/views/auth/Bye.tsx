@@ -8,7 +8,7 @@ export const Bye: React.FC<ByeProps> = () => {
 
   if (error) {
     console.log(error);
-    return <div>{JSON.stringify(error)}</div>;
+    return <div>error</div>;
   }
 
   if (loading) {
