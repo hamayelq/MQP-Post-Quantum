@@ -3,6 +3,8 @@ import { Alert, Box, Button, Collapse, TextField } from "@material-ui/core";
 import { useRegisterMutation } from "../../generated/graphql";
 import { useHistory } from "react-router";
 import { scryptPassword } from "../../utils/scryptPassword";
+import { generateKeyPair } from "../../utils/generateKeyPair";
+import { encryptPrivateKey } from "../../utils/encryptPrivateKey";
 
 interface Props {}
 
@@ -22,6 +24,11 @@ export const Register: React.FC<Props> = () => {
     const scryptArray: any = await scryptPassword(password, "register");
     const authKey = scryptArray[0];
     const encrArray = scryptArray[1];
+    const encrKey = new TextDecoder().decode(encrArray);
+
+    const { privateKey, publicKey } = await generateKeyPair();
+
+    const encryptedPrivateKey = await encryptPrivateKey(privateKey, encrKey);
 
     let response;
     try {

@@ -12,7 +12,7 @@ export const scryptPassword = async (
 ): Promise<any> => {
   const passwordArray: Uint8Array = new TextEncoder().encode(password);
 
-  const salt: Uint8Array = new TextEncoder().encode("salt");
+  const salt: Uint8Array = new TextEncoder().encode("salt"); // randomly generate (seed? datetime), store at database
 
   const hashedPassword: Uint8Array = await scrypt(
     passwordArray,
@@ -22,13 +22,13 @@ export const scryptPassword = async (
     1,
     32
   );
-  console.log("Hashed password", hashedPassword);
+  // console.log("Hashed password", hashedPassword);
 
   const firstHalf = hashedPassword.slice(0, 16);
   const lastHalf = hashedPassword.slice(16, 32);
 
   const scryptedPassword: string = new TextDecoder().decode(lastHalf);
-  console.log(scryptedPassword);
+  // console.log(scryptedPassword);
 
   if (type === "login") return scryptedPassword;
   if (type === "register") return [scryptedPassword, firstHalf];
