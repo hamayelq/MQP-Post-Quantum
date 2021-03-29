@@ -1,8 +1,14 @@
-import { Alert, Box, Button, TextField } from "@material-ui/core";
+import {
+  Alert,
+  Box,
+  Button,
+  Collapse,
+  Fade,
+  TextField,
+} from "@material-ui/core";
 import React, { useState } from "react";
 import { setAccessToken } from "../../accessToken";
 import { MeQuery, MeDocument, useLoginMutation } from "../../generated/graphql";
-import { scrypt } from "scrypt-js";
 import { useHistory } from "react-router";
 import { scryptPassword } from "../../utils/scryptPassword";
 
@@ -106,9 +112,11 @@ export const Login: React.FC<LoginProps> = () => {
             </div>
           </Alert>
         ) : (
-          <Alert severity="error">
-            <div>Incorrect username or password. Try again.</div>
-          </Alert>
+          <Fade in={error} mountOnEnter unmountOnExit>
+            <Alert severity="error">
+              <div>Incorrect username or password. Try again.</div>
+            </Alert>
+          </Fade>
         )}
       </Box>
     </form>

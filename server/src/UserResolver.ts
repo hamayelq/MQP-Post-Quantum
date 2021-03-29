@@ -125,11 +125,12 @@ export class UserResolver {
   ) {
     const hashedPassword = await hash(password, 12); // technically authentication key, hash again after hashed from client
 
-    const user = await User.findOne({ where: { username } });
+    const userByName = await User.findOne({ where: { username } });
+    const userByEmail = await User.findOne({ where: { email } });
 
-    // check if username taken/already exists
-    if (user) {
-      throw new Error("invalid registration (user already exists!)");
+    // check if username/email taken/already exists
+    if (userByName || userByEmail) {
+      throw new Error("exists");
     }
 
     try {

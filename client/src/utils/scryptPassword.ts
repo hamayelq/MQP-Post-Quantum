@@ -1,5 +1,11 @@
 import { scrypt } from "scrypt-js";
 
+/**
+ *
+ * @param password plaintext password
+ * @param type string, login or registration
+ * @returns either an array with authKey and encryption array or just authKey
+ */
 export const scryptPassword = async (
   password: string,
   type: string

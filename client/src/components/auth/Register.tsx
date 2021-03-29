@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { scrypt } from "scrypt-js";
-import { Box, Button, TextField } from "@material-ui/core";
+import { Alert, Box, Button, Collapse, TextField } from "@material-ui/core";
 import { useRegisterMutation } from "../../generated/graphql";
 import { useHistory } from "react-router";
 import { scryptPassword } from "../../utils/scryptPassword";
@@ -11,6 +10,7 @@ export const Register: React.FC<Props> = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
   const [register, { error }] = useRegisterMutation();
 
   const history = useHistory();
@@ -23,28 +23,22 @@ export const Register: React.FC<Props> = () => {
     const authKey = scryptArray[0];
     const encrArray = scryptArray[1];
 
-    console.log(authKey, encrArray);
+    let response;
+    try {
+      response = await register({
+        variables: {
+          email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
+          username,
+          password: authKey,
+        },
+      });
 
-    // const passwordArray: Uint8Array = new TextEncoder().encode(password);
-    // const salt: Uint8Array = new TextEncoder().encode("salt");
-    // console.log("Salt array", salt);
-
-    // const pass: Uint8Array = await scrypt(passwordArray, salt, 1024, 8, 1, 32);
-    // console.log("Hashed password", pass);
-
-    // const finalPass: string = new TextDecoder().decode(pass);
-    // console.log("Final password", finalPass);
-
-    const response = await register({
-      variables: {
-        email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
-        username,
-        password: authKey,
-      },
-    });
-
-    console.log(response);
-    history.push("/login");
+      console.log(response);
+      history.push("/login");
+    } catch (err) {
+      console.log(error?.message);
+      setIsError(true);
+    }
   };
 
   return (
@@ -55,7 +49,10 @@ export const Register: React.FC<Props> = () => {
         margin="normal"
         required
         name="email"
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          setIsError(false);
+        }}
         type="email"
         value={email}
         variant="outlined"
@@ -66,7 +63,10 @@ export const Register: React.FC<Props> = () => {
         margin="normal"
         required
         name="username"
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={(e) => {
+          setUsername(e.target.value);
+          setIsError(false);
+        }}
         type="username"
         value={username}
         variant="outlined"
@@ -94,6 +94,15 @@ export const Register: React.FC<Props> = () => {
           Register
         </Button>
       </Box>
+      {error?.message === "exists" && (
+        <Collapse in={isError} mountOnEnter unmountOnExit>
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="error">
+              <div>A user with that username or email already exists.</div>
+            </Alert>
+          </Box>
+        </Collapse>
+      )}
     </form>
   );
 };
