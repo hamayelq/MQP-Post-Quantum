@@ -3,6 +3,7 @@ import { scrypt } from "scrypt-js";
 import { Box, Button, TextField } from "@material-ui/core";
 import { useRegisterMutation } from "../../generated/graphql";
 import { useHistory } from "react-router";
+import { scryptPassword } from "../../utils/scryptPassword";
 
 interface Props {}
 
@@ -18,27 +19,27 @@ export const Register: React.FC<Props> = () => {
     event.preventDefault();
     console.log("form submitted");
 
-    const passwordArray: Uint8Array = new TextEncoder().encode(password);
-    const saltArray: Uint8Array = new TextEncoder().encode("salt");
+    const scryptArray: any = await scryptPassword(password, "register");
+    const authKey = scryptArray[0];
+    const encrArray = scryptArray[1];
 
-    const pass: Uint8Array = await scrypt(
-      passwordArray,
-      saltArray,
-      1024,
-      8,
-      1,
-      32
-    );
-    console.log(pass);
+    console.log(authKey, encrArray);
 
-    const finalPass: string = new TextDecoder().decode(pass);
-    console.log(finalPass);
+    // const passwordArray: Uint8Array = new TextEncoder().encode(password);
+    // const salt: Uint8Array = new TextEncoder().encode("salt");
+    // console.log("Salt array", salt);
+
+    // const pass: Uint8Array = await scrypt(passwordArray, salt, 1024, 8, 1, 32);
+    // console.log("Hashed password", pass);
+
+    // const finalPass: string = new TextDecoder().decode(pass);
+    // console.log("Final password", finalPass);
 
     const response = await register({
       variables: {
         email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
         username,
-        password: finalPass,
+        password: authKey,
       },
     });
 
@@ -52,6 +53,7 @@ export const Register: React.FC<Props> = () => {
         fullWidth
         label="Email"
         margin="normal"
+        required
         name="email"
         onChange={(e) => setEmail(e.target.value)}
         type="email"
@@ -62,6 +64,7 @@ export const Register: React.FC<Props> = () => {
         fullWidth
         label="Username"
         margin="normal"
+        required
         name="username"
         onChange={(e) => setUsername(e.target.value)}
         type="username"
@@ -72,6 +75,7 @@ export const Register: React.FC<Props> = () => {
         fullWidth
         label="Password"
         margin="normal"
+        required
         name="password"
         onChange={(e) => setPassword(e.target.value)}
         type="password"
