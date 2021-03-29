@@ -8,6 +8,7 @@ interface RegisterProps {}
 
 export const Register: React.FC<RegisterProps> = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [register] = useRegisterMutation();
 
@@ -41,6 +42,7 @@ export const Register: React.FC<RegisterProps> = () => {
           const response = await register({
             variables: {
               email,
+              username,
               password: finalPass,
             },
           });

@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({}) => {
   if (loading) {
     body = null;
   } else if (data && data.me) {
-    body = <div>you are logged in as: {data.me.email} </div>;
+    body = <div>you are logged in as: {data.me.username} </div>;
   } else {
     body = <div>not logged in</div>;
   }

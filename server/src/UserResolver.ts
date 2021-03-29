@@ -80,11 +80,11 @@ export class UserResolver {
   // login a user
   @Mutation(() => LoginResponse) // returns LoginResponse
   async login(
-    @Arg("email") email: string, // ('') name of graphQL arg, email = variable name, string = type
+    @Arg("username") username: string, // ('') name of graphQL arg, username = variable name, string = type
     @Arg("password") password: string,
     @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { username } });
 
     // login error
     // username incorrect/does not exist
@@ -119,12 +119,13 @@ export class UserResolver {
   // register a user
   @Mutation(() => Boolean) // returns boolean, true worked
   async register(
-    @Arg("email") email: string, // ('') name of graphQL arg, email = variable name, string = type
+    @Arg("email") email: string,
+    @Arg("username") username: string, // ('') name of graphQL arg, username = variable name, string = type
     @Arg("password") password: string
   ) {
     const hashedPassword = await hash(password, 12); // technically authentication key, hash again after hashed from client
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { username } });
 
     // check if username taken/already exists
     if (user) {
@@ -133,6 +134,7 @@ export class UserResolver {
 
     try {
       await User.insert({
+        username,
         email,
         password: hashedPassword,
       });

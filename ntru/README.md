@@ -1,6 +1,8 @@
 # ntru.js
 
-This is my edited and updated version of an NTRU javascript implementation.
+This is an updated version of a WebAssembly implementation of the NTRU post quantum cryptographic algorithm.
+Includes JavaScript wrapper to be used in both frontend and backend applications - framework agnostic, as long as it is JavaScript or TypeScript.
+Currently limited types for TypeScript, though if you would like to contribute, please send a PR.
 
 It is being edited/updated to be used within a PWA communication platform for research purposes.
 

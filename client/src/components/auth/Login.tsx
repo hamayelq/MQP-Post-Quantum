@@ -1,6 +1,5 @@
 import { Alert, Box, Button, TextField } from "@material-ui/core";
 import React, { useState } from "react";
-import { RouteComponentProps } from "react-router";
 import { setAccessToken } from "../../accessToken";
 import { MeQuery, MeDocument, useLoginMutation } from "../../generated/graphql";
 import { scrypt } from "scrypt-js";
@@ -8,9 +7,10 @@ import { scrypt } from "scrypt-js";
 interface LoginProps {}
 
 export const Login: React.FC<LoginProps> = () => {
-  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { error }] = useLoginMutation();
+  const [login] = useLoginMutation();
 
   const submitForm = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
@@ -29,7 +29,7 @@ export const Login: React.FC<LoginProps> = () => {
     try {
       response = await login({
         variables: {
-          email,
+          username,
           password: finalPass,
         },
         update: (store, { data }) => {
@@ -47,7 +47,8 @@ export const Login: React.FC<LoginProps> = () => {
       });
       console.log(response);
     } catch (err) {
-      console.log(err);
+      console.log(err.message);
+      setError(err.message);
     }
 
     if (response && response.data) {
@@ -58,16 +59,19 @@ export const Login: React.FC<LoginProps> = () => {
   return (
     <form name="form" noValidate onSubmit={(e) => submitForm(e)}>
       <TextField
-        id="email"
+        id="username"
         required
         fullWidth
         autoFocus
         margin="normal"
         label="Username"
-        type="email"
+        type="username"
         variant="outlined"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={username}
+        onChange={(e) => {
+          setUsername(e.target.value);
+          setError("");
+        }}
       />
       <TextField
         id="password"
@@ -79,7 +83,10 @@ export const Login: React.FC<LoginProps> = () => {
         type="password"
         variant="outlined"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          setError("");
+        }}
       />
       <Box sx={{ mt: 2 }}>
         <Button
@@ -88,17 +95,23 @@ export const Login: React.FC<LoginProps> = () => {
           size="large"
           type="submit"
           variant="contained"
-          disabled={!email || !password}
+          disabled={!username || !password}
         >
           Log In
         </Button>
       </Box>
       <Box sx={{ mt: 2 }}>
-        <Alert severity="info">
-          <div>
-            Use username <b>demo</b> and password <b>Password!123</b>
-          </div>
-        </Alert>
+        {error === "" ? (
+          <Alert severity="info">
+            <div>
+              Use username <b>demo</b> and password <b>Password!123</b>
+            </div>
+          </Alert>
+        ) : (
+          <Alert severity="error">
+            <div>Incorrect username or password. Try again.</div>
+          </Alert>
+        )}
       </Box>
     </form>
   );

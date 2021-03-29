@@ -1,16 +1,8 @@
 import { useState } from "react";
 import { scrypt } from "scrypt-js";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormHelperText,
-  TextField,
-  Typography,
-  Link,
-} from "@material-ui/core";
+import { Box, Button, TextField } from "@material-ui/core";
 import { useRegisterMutation } from "../../generated/graphql";
-import { RouteComponentProps, useHistory } from "react-router";
+import { useHistory } from "react-router";
 
 interface Props {}
 
@@ -45,12 +37,13 @@ export const Register: React.FC<Props> = () => {
     const response = await register({
       variables: {
         email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
+        username,
         password: finalPass,
       },
     });
 
     console.log(response);
-    history.push("/");
+    history.push("/login");
   };
 
   return (

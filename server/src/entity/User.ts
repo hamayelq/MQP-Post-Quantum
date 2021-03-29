@@ -8,6 +8,16 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field(() => String)
+  @PrimaryGeneratedColumn("uuid")
+  uuid: string;
+
+  @Field()
+  @Column("text")
+  username: string;
+
+  /* not used for login process, should be used for password
+     recovery in future */
   @Field()
   @Column("text")
   email: string;

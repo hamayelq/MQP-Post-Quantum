@@ -6,7 +6,7 @@ import { setAccessToken } from "../../accessToken";
 import { MeDocument, MeQuery, useLoginMutation } from "../../generated/graphql";
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [login, { error }] = useLoginMutation();
 
@@ -39,7 +39,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           try {
             response = await login({
               variables: {
-                email,
+                username,
                 password: finalPass,
               },
               update: (store, { data }) => {
@@ -69,9 +69,9 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
       >
         <div className="form-group">
           <input
-            value={email}
-            placeholder="email"
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            placeholder="username"
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div className="form-group">
