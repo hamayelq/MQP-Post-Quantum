@@ -30,6 +30,7 @@ export const Login: React.FC<LoginProps> = () => {
 
     sessionStorage.setItem("ntruPrivateKey", privateKey);
     sessionStorage.setItem("ntruPublicKey", publicKey);
+    sessionStorage.setItem("encrKey", encrKey);
   };
 
   const submitForm = async (event: React.FormEvent<EventTarget>) => {
@@ -71,7 +72,7 @@ export const Login: React.FC<LoginProps> = () => {
       const { encryptedPrivateKey, publicKey } = response.data.login;
       storeValues(encrKey, encryptedPrivateKey, publicKey);
       setAccessToken(response.data.login.accessToken);
-      // history.push("/");
+      history.push("/chat");
     }
   };
 
