@@ -6,10 +6,7 @@ import { scrypt } from "scrypt-js";
  * @param type string, login or registration
  * @returns either an array with authKey and encryption array or just authKey
  */
-export const scryptPassword = async (
-  password: string,
-  type: string
-): Promise<any> => {
+export const scryptPassword = async (password: string): Promise<any> => {
   const passwordArray: Uint8Array = new TextEncoder().encode(password);
 
   const salt: Uint8Array = new TextEncoder().encode("salt"); // randomly generate (seed? datetime), store at database
@@ -29,10 +26,5 @@ export const scryptPassword = async (
 
   const scryptedPassword: string = new TextDecoder().decode(lastHalf);
   // console.log(scryptedPassword);
-
-  if (type === "login") return scryptedPassword;
-  if (type === "register") return [scryptedPassword, firstHalf];
-
-  // if type is not login or register, error
-  return -1;
+  return [scryptedPassword, firstHalf];
 };

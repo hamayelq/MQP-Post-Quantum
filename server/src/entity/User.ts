@@ -13,6 +13,14 @@ export class User extends BaseEntity {
   uuid: string;
 
   @Field()
+  @Column("text", { nullable: true }) // remove nullable in production
+  publicKey: string; // plaintext public key
+
+  @Field()
+  @Column("text", { nullable: true }) // remove nullable in production
+  encryptedPrivateKey: string; // encrypted private key
+
+  @Field()
   @Column("text")
   username: string;
 

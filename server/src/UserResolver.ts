@@ -22,6 +22,10 @@ import { verify } from "jsonwebtoken";
 class LoginResponse {
   @Field()
   accessToken: string;
+  @Field()
+  encryptedPrivateKey: string;
+  @Field()
+  publicKey: string;
   @Field(() => User)
   user: User;
 }
@@ -96,7 +100,12 @@ export class UserResolver {
 
     //password invalid
     if (!valid) {
+      console.log("Invalid login attempt: ", username, password);
       throw new Error("invalid login (incorrect password)");
+    }
+
+    if (valid) {
+      console.log("Valid login attempt");
     }
 
     // login success
@@ -104,6 +113,8 @@ export class UserResolver {
 
     return {
       accessToken: createAccessToken(user),
+      encryptedPrivateKey: user.encryptedPrivateKey,
+      publicKey: user.publicKey,
       user,
     };
   }
@@ -121,7 +132,9 @@ export class UserResolver {
   async register(
     @Arg("email") email: string,
     @Arg("username") username: string, // ('') name of graphQL arg, username = variable name, string = type
-    @Arg("password") password: string
+    @Arg("password") password: string,
+    @Arg("publicKey") publicKey: string,
+    @Arg("encryptedPrivateKey") encryptedPrivateKey: string
   ) {
     const hashedPassword = await hash(password, 12); // technically authentication key, hash again after hashed from client
 
@@ -138,6 +151,8 @@ export class UserResolver {
         username,
         email,
         password: hashedPassword,
+        publicKey,
+        encryptedPrivateKey,
       });
     } catch (err) {
       console.log(err);

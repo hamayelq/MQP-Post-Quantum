@@ -4,6 +4,7 @@ import { setAccessToken } from "../../accessToken";
 import { MeQuery, MeDocument, useLoginMutation } from "../../generated/graphql";
 import { useHistory } from "react-router";
 import { scryptPassword } from "../../utils/scryptPassword";
+import { decryptPrivateKey } from "../../utils/decryptPrivateKey";
 
 interface LoginProps {}
 
@@ -15,11 +16,30 @@ export const Login: React.FC<LoginProps> = () => {
 
   const history = useHistory();
 
+  const storeValues = (
+    encrKey: string,
+    encryptedPrivateKey: string,
+    publicKeyText: string
+  ) => {
+    const { privateKey, publicKey } = decryptPrivateKey(
+      publicKeyText,
+      encryptedPrivateKey,
+      encrKey
+    );
+    console.log("decrypted private key", privateKey);
+
+    sessionStorage.setItem("ntruPrivateKey", privateKey);
+    sessionStorage.setItem("ntruPublicKey", publicKey);
+  };
+
   const submitForm = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
     console.log("form submitted");
 
-    const authKey = await scryptPassword(password, "login");
+    const scryptArray: any = await scryptPassword(password);
+    const authKey = scryptArray[0];
+    const encrArray = scryptArray[1];
+    const encrKey = new TextDecoder().decode(encrArray);
 
     let response;
     try {
@@ -41,15 +61,17 @@ export const Login: React.FC<LoginProps> = () => {
           });
         },
       });
-      console.log(response);
     } catch (err) {
       console.log(err.message);
       setError(true);
     }
 
     if (response && response.data) {
+      console.log("Login succesful. Data: ", response.data.login);
+      const { encryptedPrivateKey, publicKey } = response.data.login;
+      storeValues(encrKey, encryptedPrivateKey, publicKey);
       setAccessToken(response.data.login.accessToken);
-      history.push("/");
+      // history.push("/");
     }
   };
 

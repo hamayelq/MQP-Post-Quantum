@@ -25,6 +25,8 @@ export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
   uuid: Scalars['String'];
+  publicKey: Scalars['String'];
+  encryptedPrivateKey: Scalars['String'];
   username: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
@@ -51,6 +53,8 @@ export type MutationLoginArgs = {
 
 
 export type MutationRegisterArgs = {
+  encryptedPrivateKey: Scalars['String'];
+  publicKey: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
   email: Scalars['String'];
@@ -59,6 +63,8 @@ export type MutationRegisterArgs = {
 export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken: Scalars['String'];
+  encryptedPrivateKey: Scalars['String'];
+  publicKey: Scalars['String'];
   user: User;
 };
 
@@ -88,7 +94,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'LoginResponse' }
-    & Pick<LoginResponse, 'accessToken'>
+    & Pick<LoginResponse, 'accessToken' | 'encryptedPrivateKey' | 'publicKey'>
     & { user: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -119,6 +125,8 @@ export type RegisterMutationVariables = Exact<{
   email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+  publicKey: Scalars['String'];
+  encryptedPrivateKey: Scalars['String'];
 }>;
 
 
@@ -203,6 +211,8 @@ export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     accessToken
+    encryptedPrivateKey
+    publicKey
     user {
       id
       username
@@ -299,8 +309,14 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $username: String!, $password: String!) {
-  register(email: $email, username: $username, password: $password)
+    mutation Register($email: String!, $username: String!, $password: String!, $publicKey: String!, $encryptedPrivateKey: String!) {
+  register(
+    email: $email
+    username: $username
+    password: $password
+    publicKey: $publicKey
+    encryptedPrivateKey: $encryptedPrivateKey
+  )
 }
     `;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
@@ -321,6 +337,8 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  *      email: // value for 'email'
  *      username: // value for 'username'
  *      password: // value for 'password'
+ *      publicKey: // value for 'publicKey'
+ *      encryptedPrivateKey: // value for 'encryptedPrivateKey'
  *   },
  * });
  */

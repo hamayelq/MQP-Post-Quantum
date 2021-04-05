@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Bye } from "./views/auth/Bye";
 import { LoginView } from "./views/authentication/LoginView";
 import { RegisterView } from "./views/authentication/RegisterView";
-import { Header } from "./views/Header";
 import { Home } from "./views/Home";
 import Ntrutest from "./views/ntrutest/ntrutest";
 
@@ -15,7 +14,6 @@ export const Routes: React.FC = () => {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={RegisterView} />
-          {/* <Route exact path="/login" component={Login} /> */}
           <Route exact path="/login" component={LoginView} />
           <Route exact path="/bye" component={Bye} />
           <Route exact path="/ntru" component={Ntrutest} />

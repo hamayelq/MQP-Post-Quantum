@@ -21,14 +21,21 @@ export const Register: React.FC<Props> = () => {
     event.preventDefault();
     console.log("form submitted");
 
-    const scryptArray: any = await scryptPassword(password, "register");
+    const scryptArray: any = await scryptPassword(password);
     const authKey = scryptArray[0];
     const encrArray = scryptArray[1];
     const encrKey = new TextDecoder().decode(encrArray);
 
     const { privateKey, publicKey } = await generateKeyPair();
 
-    const encryptedPrivateKey = await encryptPrivateKey(privateKey, encrKey);
+    const { encryptedPrivateKey, publicKeyText } = encryptPrivateKey(
+      publicKey,
+      privateKey,
+      encrKey
+    );
+    console.log("private key", privateKey);
+    console.log("encrypted private key", encryptedPrivateKey);
+    console.log("public key", publicKeyText);
 
     let response;
     try {
@@ -37,11 +44,14 @@ export const Register: React.FC<Props> = () => {
           email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
           username,
           password: authKey,
+          publicKey: publicKeyText,
+          encryptedPrivateKey,
         },
       });
 
       console.log(response);
-      history.push("/login");
+
+      if (response.data?.register) history.push("/login");
     } catch (err) {
       console.log(error?.message);
       setIsError(true);
