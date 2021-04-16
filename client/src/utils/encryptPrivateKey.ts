@@ -8,6 +8,7 @@ export const encryptPrivateKey = (
   /**
    * Simply encrypting public key with "public" in order to be able
    * to send to backend, currently backend doesn't like the public key
+   * due to its format
    */
   const publicKeyText = AES.encrypt(publicKey, "public").toString();
   const encryptedPrivateKey = AES.encrypt(privateKey, encrKey).toString();

@@ -1,5 +1,12 @@
 import { Field, Int, ObjectType } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToMany,
+  //   ManyToOne,
+} from "typeorm";
 
 @ObjectType()
 @Entity("users")
@@ -39,4 +46,7 @@ export class User extends BaseEntity {
      upon token refresh */
   @Column("int", { default: 0 })
   tokenVersion: number;
+
+  @OneToMany(() => User, (user) => user.id)
+  friends: User[];
 }
