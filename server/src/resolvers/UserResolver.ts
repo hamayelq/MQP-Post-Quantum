@@ -9,12 +9,12 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { User } from "./entity/User";
+import { User } from "../entity/User";
 import { hash, compare } from "bcryptjs";
-import { MyContext } from "./MyContext";
-import { createAccessToken, createRefreshToken } from "./auth";
-import { isAuth } from "./isAuth";
-import { sendRefreshToken } from "./sendRefreshToken";
+import { MyContext } from "../MyContext";
+import { createAccessToken, createRefreshToken } from "../auth";
+import { isAuth } from "../isAuth";
+import { sendRefreshToken } from "../sendRefreshToken";
 import { getConnection } from "typeorm";
 import { verify } from "jsonwebtoken";
 
@@ -32,11 +32,6 @@ class LoginResponse {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => String)
-  hello() {
-    return "hie :D";
-  }
-
   // bye!
   @Query(() => String)
   @UseMiddleware(isAuth)

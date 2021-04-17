@@ -5,8 +5,11 @@ import {
   Column,
   BaseEntity,
   OneToMany,
+  ManyToMany,
   //   ManyToOne,
 } from "typeorm";
+import { Chat } from "./Chat";
+import { Message } from "./Message";
 
 @ObjectType()
 @Entity("users")
@@ -28,7 +31,7 @@ export class User extends BaseEntity {
   encryptedPrivateKey: string; // encrypted private key
 
   @Field()
-  @Column("text")
+  @Column("text", { unique: true })
   username: string;
 
   /* not used for login process, should be used for password
@@ -38,7 +41,7 @@ export class User extends BaseEntity {
   email: string;
 
   // no @Field() here as to not expose password
-  @Field()
+  // @Field()
   @Column("text")
   password: string;
 
@@ -47,6 +50,15 @@ export class User extends BaseEntity {
   @Column("int", { default: 0 })
   tokenVersion: number;
 
+  @Field(() => [User])
   @OneToMany(() => User, (user) => user.id)
   friends: User[];
+
+  @Field(() => [Message])
+  @OneToMany(() => Message, (messages) => messages.fromName)
+  messages: Message[];
+
+  @Field(() => [Chat])
+  @ManyToMany(() => Chat, (chat) => chat.uuid)
+  chats: Chat[];
 }

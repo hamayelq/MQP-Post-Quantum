@@ -5,30 +5,39 @@ import {
   Column,
   BaseEntity,
   CreateDateColumn,
+  ManyToOne,
 } from "typeorm";
+import { Chat } from "./Chat";
+import { User } from "./User";
 
 @ObjectType()
 @Entity("messages")
-export class User extends BaseEntity {
+export class Message extends BaseEntity {
   @Field(() => String)
   @PrimaryGeneratedColumn("uuid")
   uuid: string;
 
-  @CreateDateColumn({ name: "createdAt" })
-  "createdAt": Date;
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.messages)
+  sender: User;
+
+  @Field(() => Chat)
+  @ManyToOne(() => Chat, (chat) => chat.messages)
+  chat: Chat;
 
   @Field()
   @Column("text")
   fromName: string;
 
-  /* not used for login process, should be used for password
-     recovery in future */
   @Field()
   @Column("text")
   toName: string;
 
-  // no @Field() here as to not expose password
   @Field()
   @Column("text")
   content: string;
+
+  @Field()
+  @CreateDateColumn()
+  date: string;
 }
