@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import {
+  Column,
   Entity,
   PrimaryGeneratedColumn,
   BaseEntity,
@@ -29,11 +30,15 @@ export class Chat extends BaseEntity {
   @JoinTable()
   members: User[];
 
-  @Field()
+  @Field(() => String)
+  @Column({ nullable: true })
+  lastMessage: string;
+
+  @Field(() => Date)
   @CreateDateColumn({ name: "createdAt" })
   "createdAt": Date;
 
-  @Field()
+  @Field(() => Date)
   @UpdateDateColumn({ name: "updatedAt" })
   "updatedAt": Date;
 }

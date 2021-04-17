@@ -10,6 +10,7 @@ import { User } from "./entity/User";
 import { createAccessToken, createRefreshToken } from "./auth";
 import { sendRefreshToken } from "./sendRefreshToken";
 import cors from "cors";
+import { MessageResolver } from "./resolvers/MessageResolver";
 
 /* lambda function, logic to start server */
 (async () => {
@@ -69,7 +70,7 @@ import cors from "cors";
   /* defining GraphQL specifics */
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, MessageResolver],
     }),
     context: ({ req, res }) => ({ req, res }), // global context
   });
