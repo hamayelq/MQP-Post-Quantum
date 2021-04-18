@@ -1,0 +1,11 @@
+query GetChats {
+  getChats {
+    uuid
+    name
+    lastMessage
+    members {
+      username
+      uuid
+    }
+  }
+}

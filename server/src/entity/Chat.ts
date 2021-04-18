@@ -20,6 +20,10 @@ export class Chat extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   uuid: string;
 
+  @Field(() => String)
+  @Column()
+  name: string;
+
   @Field(() => Message)
   @OneToMany(() => Message, (messages) => messages.chat)
   @JoinTable()

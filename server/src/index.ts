@@ -7,10 +7,11 @@ import { createConnection } from "typeorm";
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import { User } from "./entity/User";
-import { createAccessToken, createRefreshToken } from "./auth";
-import { sendRefreshToken } from "./sendRefreshToken";
+import { createAccessToken, createRefreshToken } from "./auth/auth";
+import { sendRefreshToken } from "./auth/sendRefreshToken";
 import cors from "cors";
 import { MessageResolver } from "./resolvers/MessageResolver";
+import { ChatResolver } from "./resolvers/ChatResolver";
 
 /* lambda function, logic to start server */
 (async () => {
@@ -70,7 +71,7 @@ import { MessageResolver } from "./resolvers/MessageResolver";
   /* defining GraphQL specifics */
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, MessageResolver],
+      resolvers: [UserResolver, MessageResolver, ChatResolver],
     }),
     context: ({ req, res }) => ({ req, res }), // global context
   });

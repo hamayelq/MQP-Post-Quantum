@@ -12,9 +12,9 @@ import {
 import { User } from "../entity/User";
 import { hash, compare } from "bcryptjs";
 import { MyContext } from "../MyContext";
-import { createAccessToken, createRefreshToken } from "../auth";
-import { isAuth } from "../isAuth";
-import { sendRefreshToken } from "../sendRefreshToken";
+import { createAccessToken, createRefreshToken } from "../auth/auth";
+import { isAuth } from "../auth/isAuth";
+import { sendRefreshToken } from "../auth/sendRefreshToken";
 import { getConnection } from "typeorm";
 import { verify } from "jsonwebtoken";
 
@@ -41,8 +41,10 @@ export class UserResolver {
 
   // find users in db
   @Query(() => [User])
-  users() {
-    return User.find();
+  async getUsers() {
+    let users = await User.find();
+
+    return users;
   }
 
   // return currently logged in user

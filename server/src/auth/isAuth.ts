@@ -1,6 +1,6 @@
 import { verify } from "jsonwebtoken";
 import { MiddlewareFn } from "type-graphql";
-import { MyContext } from "./MyContext";
+import { MyContext } from "../MyContext";
 
 // bearer - token
 

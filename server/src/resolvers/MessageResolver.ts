@@ -12,7 +12,11 @@ export type contextType = {
 @Resolver()
 export class MessageResolver {
   @Mutation(() => Boolean)
-  async createMessage(_: any, { chatId, content }: any, { user }: contextType) {
+  async createMessage(
+    _: any,
+    { chatId, content }: { chatId: string; content: string },
+    { user }: contextType
+  ) {
     if (!user) {
       throw new Error("createNessage: user unauthorized");
     }
@@ -43,7 +47,7 @@ export class MessageResolver {
   }
 
   @Query(() => Chat)
-  async getMessages(_: any, { chatId }: any, { user }: contextType) {
+  async getMessages(chatId: string, { user }: contextType) {
     if (!user) {
       throw new Error("getMessage: user unauthorized");
     }

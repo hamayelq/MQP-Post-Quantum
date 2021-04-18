@@ -1,0 +1,6 @@
+# mutation CreateChat($memberIds: [String]) {
+#   createChat(memberIds: $memberIds) {
+#     message
+#     path
+#   }
+# }
