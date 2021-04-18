@@ -1,7 +1,15 @@
 # Post Quantum Communication Application
 
-Repository for my Major Qualifying Project. More to come :)
+#### Repository for my Major Qualifying Project. More to come :)
 
-Currently setting up backend login and registration system with GraphQL, Apollo, and Postgres. Mostly there.
+##### Completed:
 
-Starting progress of front end E2E encryption and public-private key generation with my NTRU implementation.
+- Login and registration process complete.
+- NTRU key generation complete.
+- NTRU Private key encryption complete.
+- Storage and retrieval of key pairs complete.
+- Decryption of NTRU Private key complete.
+
+##### In progress:
+
+- A lot. D:
