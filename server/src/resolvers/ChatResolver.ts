@@ -1,4 +1,4 @@
-import { Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { Chat } from "../entity/Chat";
@@ -10,7 +10,10 @@ export type contextType = {
 @Resolver()
 export class ChatResolver {
   @Mutation(() => Boolean)
-  async createChat(memberIds: string[], { user }: contextType) {
+  async createChat(
+    @Arg("memberIds", () => [String]) memberIds: string[],
+    { user }: contextType
+  ) {
     if (!user) {
       throw new Error("createChat: user not authorized");
     }

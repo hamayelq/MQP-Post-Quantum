@@ -50,9 +50,9 @@ export class User extends BaseEntity {
   @Column("int", { default: 0 })
   tokenVersion: number;
 
-  @Field(() => [User])
-  @OneToMany(() => User, (user) => user.id)
-  friends: User[];
+  // @Field(() => [User])
+  // @OneToMany(() => User, (user) => user.id)
+  // friends: User[];
 
   @Field(() => [Message])
   @OneToMany(() => Message, (messages) => messages.fromName)

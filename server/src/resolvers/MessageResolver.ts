@@ -1,4 +1,4 @@
-import { Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { PubSub, withFilter } from "apollo-server-express";
 import { getRepository } from "typeorm";
 import { Chat } from "../entity/Chat";
@@ -13,12 +13,13 @@ export type contextType = {
 export class MessageResolver {
   @Mutation(() => Boolean)
   async createMessage(
-    _: any,
-    { chatId, content }: { chatId: string; content: string },
+    @Arg("chatId") chatId: string,
+    @Arg("content") content: string,
+    // { chatId, content }: { chatId: string; content: string },
     { user }: contextType
   ) {
     if (!user) {
-      throw new Error("createNessage: user unauthorized");
+      throw new Error("createMessage: user unauthorized");
     }
 
     const chat: Chat | undefined = await Chat.findOne({ uuid: chatId });
@@ -46,8 +47,8 @@ export class MessageResolver {
     return true;
   }
 
-  @Query(() => Chat)
-  async getMessages(chatId: string, { user }: contextType) {
+  @Query(() => [Message])
+  async getMessages(@Arg("chatId") chatId: string, { user }: contextType) {
     if (!user) {
       throw new Error("getMessage: user unauthorized");
     }
