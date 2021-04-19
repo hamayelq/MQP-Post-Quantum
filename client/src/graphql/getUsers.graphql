@@ -1,5 +1,5 @@
-query GetUsers {
-  getUsers {
+query GetUsers($uuid: String!) {
+  getUsers(uuid: $uuid) {
     id
     username
   }

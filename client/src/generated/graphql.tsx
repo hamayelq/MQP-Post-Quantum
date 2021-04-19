@@ -28,6 +28,11 @@ export type Query = {
 };
 
 
+export type QueryGetUsersArgs = {
+  uuid: Scalars['String'];
+};
+
+
 export type QueryGetMessagesArgs = {
   chatId: Scalars['String'];
 };
@@ -188,7 +193,9 @@ export type GetMessagesQuery = (
   )> }
 );
 
-export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetUsersQueryVariables = Exact<{
+  uuid: Scalars['String'];
+}>;
 
 
 export type GetUsersQuery = (
@@ -425,8 +432,8 @@ export type GetMessagesQueryHookResult = ReturnType<typeof useGetMessagesQuery>;
 export type GetMessagesLazyQueryHookResult = ReturnType<typeof useGetMessagesLazyQuery>;
 export type GetMessagesQueryResult = Apollo.QueryResult<GetMessagesQuery, GetMessagesQueryVariables>;
 export const GetUsersDocument = gql`
-    query GetUsers {
-  getUsers {
+    query GetUsers($uuid: String!) {
+  getUsers(uuid: $uuid) {
     id
     username
   }
@@ -445,10 +452,11 @@ export const GetUsersDocument = gql`
  * @example
  * const { data, loading, error } = useGetUsersQuery({
  *   variables: {
+ *      uuid: // value for 'uuid'
  *   },
  * });
  */
-export function useGetUsersQuery(baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+export function useGetUsersQuery(baseOptions: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
         return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, baseOptions);
       }
 export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {

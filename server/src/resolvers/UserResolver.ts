@@ -41,8 +41,9 @@ export class UserResolver {
 
   // find users in db
   @Query(() => [User])
-  async getUsers() {
+  async getUsers(@Arg("uuid") uuid: string) {
     let users = await User.find();
+    users = users.filter((user) => user.uuid !== uuid);
 
     return users;
   }
