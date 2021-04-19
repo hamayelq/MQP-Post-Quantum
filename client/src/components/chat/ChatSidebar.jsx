@@ -6,19 +6,48 @@ import PencilAltIcon from "../../icons/PencilAlt";
 import Scrollbar from "../Scrollbar";
 import ChatContactSearch from "./ChatContactSearch";
 import ChatThreadList from "./ChatThreadList";
+import { useGetUsersQuery } from "../../generated/graphql";
 
 const ChatSidebar = () => {
+  const userUuid = sessionStorage.getItem("userUuid") || "";
+  const { data } = useGetUsersQuery({
+    variables: { uuid: userUuid },
+    fetchPolicy: "network-only",
+  }); // network-only not reading from cache, request every time
+
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  const handleSearchClickAway = () => {};
+  const handleSearchClickAway = () => {
+    setIsSearchFocused(false);
+    setSearchQuery("");
+  };
 
-  const handleSearchChange = async (event) => {};
+  const handleSearchChange = async (event) => {
+    const { value } = event.target;
+    const results = data.getUsers;
 
-  const handleSearchFocus = () => {};
+    setSearchQuery(value);
 
-  const handleSearchSelect = (result) => {};
+    if (searchQuery) {
+      const cleanQuery = searchQuery.toLowerCase().trim();
+      const filteredUsers = results.filter((user) =>
+        user.username.toLowerCase().includes(cleanQuery)
+      );
+      setSearchResults(filteredUsers);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    setSearchResults(data.getUsers);
+    setIsSearchFocused(true);
+  };
+
+  const handleSearchSelect = (result) => {
+    setIsSearchFocused(false);
+    setSearchQuery("");
+  };
 
   return (
     <Box
@@ -45,13 +74,13 @@ const ChatSidebar = () => {
             Chats
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton>
+          {/* <IconButton>
             <CogIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
         </Hidden>
-        <IconButton component={RouterLink}>
+        {/* <IconButton component={RouterLink}>
           <PencilAltIcon fontSize="small" />
-        </IconButton>
+        </IconButton> */}
       </Box>
       <Hidden smDown>
         <ChatContactSearch
@@ -61,7 +90,7 @@ const ChatSidebar = () => {
           onFocus={handleSearchFocus}
           onSelect={handleSearchSelect}
           query={searchQuery}
-          results={searchResults}
+          results={searchResults || []}
         />
       </Hidden>
       <Scrollbar options={{ suppressScrollX: true }}>

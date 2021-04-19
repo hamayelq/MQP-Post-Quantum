@@ -55,10 +55,10 @@ export class User extends BaseEntity {
   // friends: User[];
 
   @Field(() => [Message])
-  @OneToMany(() => Message, (messages) => messages.fromName)
+  @OneToMany(() => Message, (messages) => messages.fromName, { nullable: true })
   messages: Message[];
 
   @Field(() => [Chat])
-  @ManyToMany(() => Chat, (chat) => chat.uuid)
+  @ManyToMany(() => Chat, (chat) => chat.uuid, { nullable: true })
   chats: Chat[];
 }

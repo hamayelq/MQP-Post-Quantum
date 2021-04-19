@@ -219,7 +219,7 @@ export type LoginMutation = (
     & Pick<LoginResponse, 'accessToken' | 'encryptedPrivateKey' | 'publicKey'>
     & { user: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
+      & Pick<User, 'id' | 'uuid' | 'username'>
     ) }
   ) }
 );
@@ -474,6 +474,7 @@ export const LoginDocument = gql`
     publicKey
     user {
       id
+      uuid
       username
     }
   }

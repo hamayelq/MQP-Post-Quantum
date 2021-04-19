@@ -54,6 +54,8 @@ export const Login: React.FC<LoginProps> = () => {
           if (!data) {
             return null;
           }
+          sessionStorage.setItem("userUuid", data.login.user.uuid);
+          sessionStorage.setItem("userUsername", data.login.user.username);
           store.writeQuery<MeQuery>({
             query: MeDocument,
             data: {

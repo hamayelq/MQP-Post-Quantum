@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import PropTypes from "prop-types";
 import {
   Avatar,
   Box,
@@ -58,7 +57,7 @@ const ChatContactSearch = forwardRef((props, ref) => {
               disableUnderline
               onChange={onChange}
               onFocus={onFocus}
-              placeholder="Search contacts"
+              placeholder="Search users"
               value={query}
             />
           </Box>
@@ -75,17 +74,8 @@ const ChatContactSearch = forwardRef((props, ref) => {
                   key={result.id}
                   onClick={() => handleSelect(result)}
                 >
-                  <ListItemAvatar>
-                    <Avatar
-                      src={result.avatar}
-                      sx={{
-                        height: 32,
-                        width: 32,
-                      }}
-                    />
-                  </ListItemAvatar>
                   <ListItemText
-                    primary={result.name}
+                    primary={result.username}
                     primaryTypographyProps={{
                       color: "textPrimary",
                       noWrap: true,
@@ -94,6 +84,23 @@ const ChatContactSearch = forwardRef((props, ref) => {
                   />
                 </ListItem>
               ))}
+              {results.length === 0 && (
+                <Box
+                  sx={{
+                    p: 2,
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography color="textPrimary" gutterBottom variant="h6">
+                    Nothing Found
+                  </Typography>
+                  <Typography color="textSecondary" variant="body2">
+                    We couldn&apos;t find any matches for &quot;
+                    {query}
+                    &quot;. Try checking for typos or using complete words.
+                  </Typography>
+                </Box>
+              )}
             </List>
           </Box>
         )}
@@ -101,21 +108,5 @@ const ChatContactSearch = forwardRef((props, ref) => {
     </ClickAwayListener>
   );
 });
-
-ChatContactSearch.propTypes = {
-  isFocused: PropTypes.bool,
-  onChange: PropTypes.func,
-  onClickAway: PropTypes.func,
-  onFocus: PropTypes.func,
-  onSelect: PropTypes.func,
-  query: PropTypes.string,
-  results: PropTypes.array,
-};
-
-ChatContactSearch.defaultProps = {
-  isFocused: false,
-  query: "",
-  results: [],
-};
 
 export default ChatContactSearch;

@@ -5,6 +5,7 @@ mutation Login($username: String!, $password: String!) {
     publicKey
     user {
       id
+      uuid
       username
     }
   }

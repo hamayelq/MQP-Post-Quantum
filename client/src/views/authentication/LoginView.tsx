@@ -4,16 +4,12 @@ import {
   CardContent,
   Card,
   Container,
-  createStyles,
-  makeStyles,
-  Theme,
   Typography,
   Divider,
   Tooltip,
 } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import { Link as RouterLink } from "react-router-dom";
-import { Page } from "../../components/Page";
 import { Login } from "../../components/auth/Login";
 import Logo from "../../components/Logo";
 
