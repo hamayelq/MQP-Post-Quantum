@@ -42,10 +42,18 @@ export class UserResolver {
   // find users in db
   @Query(() => [User])
   async getUsers(@Arg("uuid") uuid: string) {
-    let users = await User.find();
-    users = users.filter((user) => user.uuid !== uuid);
+    console.log(
+      `getUsers request made by user with uuid ${uuid ? uuid : "NULL"}`
+    );
 
-    return users;
+    try {
+      let users = await User.find();
+      users = users.filter((user) => user.uuid !== uuid);
+      return users;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 
   // return currently logged in user
