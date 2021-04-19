@@ -202,7 +202,7 @@ export type GetUsersQuery = (
   { __typename?: 'Query' }
   & { getUsers: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username'>
+    & Pick<User, 'id' | 'uuid' | 'username'>
   )> }
 );
 
@@ -435,6 +435,7 @@ export const GetUsersDocument = gql`
     query GetUsers($uuid: String!) {
   getUsers(uuid: $uuid) {
     id
+    uuid
     username
   }
 }

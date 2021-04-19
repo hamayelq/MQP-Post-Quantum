@@ -1,6 +1,7 @@
 query GetUsers($uuid: String!) {
   getUsers(uuid: $uuid) {
     id
+    uuid
     username
   }
 }
