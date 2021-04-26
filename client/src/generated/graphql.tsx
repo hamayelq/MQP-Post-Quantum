@@ -64,7 +64,7 @@ export type Message = {
   toName: Scalars["String"];
   content: Scalars["String"];
   me: Scalars["Boolean"];
-  date: Scalars["String"];
+  date: Scalars["DateTime"];
 };
 
 export type Chat = {
@@ -168,7 +168,10 @@ export type GetChatsQueryVariables = Exact<{
 
 export type GetChatsQuery = { __typename?: "Query" } & {
   getChats: Array<
-    { __typename?: "Chat" } & Pick<Chat, "uuid" | "name" | "lastMessage">
+    { __typename?: "Chat" } & Pick<
+      Chat,
+      "uuid" | "name" | "lastMessage" | "updatedAt"
+    >
   >;
 };
 
@@ -381,6 +384,7 @@ export const GetChatsDocument = gql`
       uuid
       name
       lastMessage
+      updatedAt
     }
   }
 `;

@@ -41,7 +41,7 @@ export class Message extends BaseEntity {
   @Column("boolean", { default: false })
   me: boolean;
 
-  @Field()
-  @CreateDateColumn()
-  date: string;
+  @Field(() => Date)
+  @CreateDateColumn({ name: "date" })
+  "date": Date;
 }

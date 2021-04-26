@@ -3,5 +3,6 @@ query GetChats($userId: String!) {
     uuid
     name
     lastMessage
+    updatedAt
   }
 }

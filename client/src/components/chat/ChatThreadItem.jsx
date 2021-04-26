@@ -42,7 +42,7 @@ const ChatThreadItem = (props) => {
             noWrap: true,
             variant: "subtitle2",
           }}
-          secondary={chat.lastMessage || "No messages..."}
+          secondary={chat.lastMessage || <i>No messages...</i>}
           secondaryTypographyProps={{
             color: "textSecondary",
             noWrap: true,

@@ -1,4 +1,5 @@
 import { Box, Divider } from "@material-ui/core";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   useCreateMessageMutation,
@@ -7,6 +8,26 @@ import {
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
+
+const useInterval = (callback, delay) => {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+};
 
 const ChatThread = () => {
   const { threadKey } = useParams();
@@ -37,8 +58,13 @@ const ChatThread = () => {
 
     if (response && response.data) {
       console.log("Send message succesful", response.data);
+      refetchMessages();
     }
   };
+
+  useInterval(() => {
+    refetchMessages();
+  }, 100);
 
   return (
     <Box

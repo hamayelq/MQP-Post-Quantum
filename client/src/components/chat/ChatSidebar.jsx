@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Hidden, IconButton, Typography } from "@material-ui/core";
 import CogIcon from "../../icons/Cog";
@@ -11,6 +11,26 @@ import {
   useGetChatsQuery,
   useGetUsersQuery,
 } from "../../generated/graphql";
+
+const useInterval = (callback, delay) => {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+};
 
 const ChatSidebar = () => {
   const userUuid = sessionStorage.getItem("userUuid") || "";
@@ -41,7 +61,7 @@ const ChatSidebar = () => {
 
     if (searchQuery) {
       const cleanQuery = searchQuery.toLowerCase().trim();
-      const filteredUsers = await results.filter((user) =>
+      const filteredUsers = results.filter((user) =>
         user.username.toLowerCase().includes(cleanQuery)
       );
       setSearchResults(filteredUsers);
@@ -75,6 +95,10 @@ const ChatSidebar = () => {
       refetchChats();
     }
   };
+
+  useInterval(() => {
+    refetchChats();
+  }, 100);
 
   return (
     <Box

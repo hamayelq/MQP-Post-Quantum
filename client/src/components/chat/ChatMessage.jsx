@@ -6,7 +6,7 @@ import { Lightbox } from "react-modal-image";
 import { Avatar, Box, Link, Typography } from "@material-ui/core";
 
 const ChatMessage = (props) => {
-  const { content, sender, me } = props;
+  const { content, sender, me, date } = props;
   const [expandMedia, setExpandMedia] = useState(false);
 
   return (
@@ -62,6 +62,7 @@ const ChatMessage = (props) => {
           >
             <Typography color="textSecondary" noWrap variant="caption">
               {/* {formatDistanceToNowStrict(date)} ago */}
+              {date}
             </Typography>
           </Box>
         </div>
@@ -73,13 +74,6 @@ const ChatMessage = (props) => {
   );
 };
 
-ChatMessage.propTypes = {
-  body: PropTypes.string.isRequired,
-  contentType: PropTypes.string.isRequired,
-  createdAt: PropTypes.number.isRequired,
-  senderAvatar: PropTypes.string.isRequired,
-  senderName: PropTypes.string.isRequired,
-  senderType: PropTypes.oneOf(["contact", "user"]),
-};
+ChatMessage.propTypes = {};
 
 export default ChatMessage;

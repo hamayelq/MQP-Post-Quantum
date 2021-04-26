@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import "react-perfect-scrollbar/dist/css/styles.css";
 import "./index.css";
 import { setContext } from "@apollo/client/link/context";
 // import ApolloClient from "apollo-boost";

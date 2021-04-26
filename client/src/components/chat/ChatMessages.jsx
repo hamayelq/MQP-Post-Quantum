@@ -19,24 +19,29 @@ const ChatMessages = (props) => {
         rootRef.current._container.scrollHeight;
     }
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   return (
     <Scrollbar options={{ suppressScrollX: true }} ref={rootRef}>
-      <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          p: 2,
+        }}
+      >
         {messages &&
           messages.map((message) => {
-            const date = new Date(message.date);
+            // const date = new Date(message.date);
 
             return (
               <ChatMessage
-                key={message.id}
+                key={message.uuid}
                 sender={message.sender}
                 content={message.content}
                 me={message.me}
-                // createdAt={date}
+                createdAt={messages.date}
               />
             );
           })}
