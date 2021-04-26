@@ -90,14 +90,13 @@ const ChatThread = () => {
               overflow: "auto",
             }}
           >
-            {!messagesLoading && !messages.getMessages && (
+            {!messagesLoading && messages.getMessages.messages.length === 0 && (
               <Box
                 sx={{
-                  flex: 12,
+                  display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  display: "flex",
-                  // margin: "auto",
+                  margin: "auto",
                   p: 2,
                 }}
               >
@@ -105,9 +104,9 @@ const ChatThread = () => {
                   color="textSecondary"
                   variant="body1"
                   align="center"
+                  style={{ marginTop: "45vh" }}
                 >
-                  Select a new contact or an existing chat to begin post
-                  quantumly communicating :)
+                  Send a message to your new friend!
                 </Typography>
               </Box>
             )}
