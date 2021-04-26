@@ -1,11 +1,7 @@
-query GetChats {
-  getChats {
+query GetChats($userId: String!) {
+  getChats(userId: $userId) {
     uuid
     name
     lastMessage
-    members {
-      username
-      uuid
-    }
   }
 }

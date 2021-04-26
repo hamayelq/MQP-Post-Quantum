@@ -47,7 +47,7 @@ import { ChatResolver } from "./resolvers/ChatResolver";
       return res.send({ ok: false, accessToken: "" });
     }
 
-    const user = await User.findOne({ id: payload.userId });
+    const user = await User.findOne({ uuid: payload.userId });
 
     console.log("payload:", payload);
     console.log("USER:", user);

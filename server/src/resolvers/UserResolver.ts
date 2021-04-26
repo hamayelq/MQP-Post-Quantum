@@ -2,7 +2,6 @@ import {
   Arg,
   Ctx,
   Field,
-  Int,
   Mutation,
   ObjectType,
   Query,
@@ -30,13 +29,17 @@ class LoginResponse {
   user: User;
 }
 
+export type contextType = {
+  user: User;
+};
+
 @Resolver()
 export class UserResolver {
   // bye!
   @Query(() => String)
   @UseMiddleware(isAuth)
   bye(@Ctx() { payload }: MyContext) {
-    return `Your user id is: ${payload!.userId}`;
+    return `Your user id is: ${payload!.uuid}`;
   }
 
   // find users in db
@@ -46,14 +49,9 @@ export class UserResolver {
       `getUsers request made by user with uuid ${uuid ? uuid : "NULL"}`
     );
 
-    try {
-      let users = await User.find();
-      users = users.filter((user) => user.uuid !== uuid);
-      return users;
-    } catch (err) {
-      console.log(err);
-      return err;
-    }
+    const users = await User.find();
+    const filteredUsers: User[] = users.filter((user) => user.uuid !== uuid);
+    return filteredUsers;
   }
 
   // return currently logged in user
@@ -79,10 +77,12 @@ export class UserResolver {
 
   // this is a bad idea, should do this in a function that can be called...
   @Mutation(() => Boolean)
-  async revokeRefreshTokensForUser(@Arg("userId", () => Int) userId: number) {
+  async revokeRefreshTokensForUser(
+    @Arg("userId", () => String) userId: string
+  ) {
     await getConnection()
       .getRepository(User)
-      .increment({ id: userId }, "tokenVersion", 1);
+      .increment({ uuid: userId }, "tokenVersion", 1);
 
     return true;
   }

@@ -12,60 +12,83 @@ export class ChatResolver {
   @Mutation(() => Boolean)
   async createChat(
     @Arg("memberIds", () => [String]) memberIds: string[],
-    { user }: contextType
+    @Arg("userId") userId: string
   ) {
-    if (!user) {
-      throw new Error("createChat: user not authorized");
-    }
+    try {
+      const user = await User.findOne({ where: { uuid: userId } });
 
-    if (memberIds.length == 1) {
-      const userRepo = await this.getUserRepo(user.uuid);
+      if (!user) throw new Error("getChats: user not authorized");
 
-      for (let chat of userRepo.chats) {
-        if (chat.members.length == 2) {
-          const chatExist = chat.members.filter(
-            (member) => member.uuid == memberIds[0]
-          );
-          if (chatExist.length >= 1) return true;
+      if (memberIds.length == 1) {
+        const userRepo = await this.getUserRepo(userId);
+
+        for (let chat of userRepo.chats) {
+          if (chat.members.length == 2) {
+            const chatExist = chat.members.filter(
+              (member) => member.uuid == memberIds[0]
+            );
+            if (chatExist.length >= 1) return true;
+          }
         }
       }
+
+      const members = await this.getUserObject(memberIds);
+
+      return await this.createNewChat([...members, user]);
+    } catch (err) {
+      console.log(err);
+      return false;
     }
-
-    const members = await this.getUserObject(memberIds);
-
-    return await this.createNewChat([...members, user]);
   }
 
   @Mutation(() => Boolean)
   async createNewChat(members: User[]) {
-    const chat = await Chat.create({});
-    await chat.save();
+    try {
+      // const chats: Chat[] = getRepository(Chat);
 
-    chat.members = members;
-    await chat.save();
-
-    return true;
+      const chat = Chat.create({ members: [...members], lastMessage: "" });
+      await chat.save();
+      return true;
+    } catch (err) {
+      console.log("Save Chat FAILED\n");
+      console.log(err);
+      return false;
+    }
   }
 
   @Query(() => [Chat])
-  async getChats(_: any, {}, { user }: contextType) {
-    const userRepo = await this.getUserRepo(user.uuid);
+  async getChats(@Arg("userId") userId: string) {
+    console.log(
+      `getChats request made by user with uuid ${userId ? userId : "NULL"}`
+    );
 
-    const chats = [];
-    for (let chat of userRepo.chats) {
-      if (chat.members.length == 1) {
-        await chat.remove();
-      } else if (!chat.name) {
-        const member = chat.members.filter(
-          (member) => member.uuid !== user.uuid
-        )[0];
-        chats.push({ ...chat, name: member.username });
-      } else {
-        chats.push(chat);
+    try {
+      const user = await User.findOne({ where: { uuid: userId } });
+
+      if (!user) throw new Error("getChats: user not authorized");
+
+      const userRepo = await this.getUserRepo(userId);
+
+      const chats = [];
+      for (let chat of userRepo.chats) {
+        if (chat.members.length == 1) {
+          await chat.remove();
+        } else if (!chat.name) {
+          const member = chat.members.filter(
+            (member) => member.uuid !== user.uuid
+          )[0];
+          chats.push({ ...chat, name: member.username });
+        } else {
+          chats.push(chat);
+        }
       }
-    }
 
-    return chats;
+      console.log("getChats request succesful");
+      return chats;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
   }
 
   @Query(() => [User])

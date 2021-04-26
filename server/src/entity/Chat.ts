@@ -21,17 +21,20 @@ export class Chat extends BaseEntity {
   uuid: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @Field(() => Message)
-  @OneToMany(() => Message, (messages) => messages.chat)
+  @OneToMany(() => Message, (messages) => messages.chat, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinTable()
   messages: Message[];
 
   @Field(() => User)
-  @ManyToMany(() => User, (member) => member.chats)
   @JoinTable()
+  @ManyToMany(() => User, (member) => member.chats, { onDelete: "CASCADE" })
   members: User[];
 
   @Field(() => String)

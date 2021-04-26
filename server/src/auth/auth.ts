@@ -7,7 +7,7 @@ export const createAccessToken = (user: User) => {
      which is a random string - generate this randomly rather
      than hardcoded (currently) */
   return sign(
-    { userId: user.id },
+    { userId: user.uuid },
     process.env.ACCESS_TOKEN_SECRET!,
     { expiresIn: "15m" } // expires in 15 minutes (should be short, refresh later)
   );
@@ -15,7 +15,7 @@ export const createAccessToken = (user: User) => {
 
 export const createRefreshToken = (user: User) => {
   return sign(
-    { userId: user.id, tokenVersion: user.tokenVersion },
+    { userId: user.uuid, tokenVersion: user.tokenVersion },
     process.env.REFRESH_TOKEN_SECRET!, // needs to be different secret
     { expiresIn: "7d" } // for cookie, keep signed in for 7d
   );

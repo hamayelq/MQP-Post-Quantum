@@ -4,7 +4,6 @@ mutation Login($username: String!, $password: String!) {
     encryptedPrivateKey
     publicKey
     user {
-      id
       uuid
       username
     }

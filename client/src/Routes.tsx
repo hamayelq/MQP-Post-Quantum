@@ -16,7 +16,8 @@ export const Routes: React.FC = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={RegisterView} />
           <Route exact path="/login" component={LoginView} />
-          <Route exact path="/chat" component={Chat} />
+          <Route exact path="/chat/" component={Chat} />
+          <Route exact path="/chat/:threadKey" component={Chat} />
           <Route exact path="/bye" component={Bye} />
           <Route exact path="/ntru" component={Ntrutest} />
         </Switch>

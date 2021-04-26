@@ -2,7 +2,7 @@ import { Alert, Box, Button, Fade, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 import { setAccessToken } from "../../accessToken";
 import { MeQuery, MeDocument, useLoginMutation } from "../../generated/graphql";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { scryptPassword } from "../../utils/scryptPassword";
 import { decryptPrivateKey } from "../../utils/decryptPrivateKey";
 

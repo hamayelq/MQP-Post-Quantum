@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -8,33 +8,26 @@ import {
   TextField,
   Tooltip,
 } from "@material-ui/core";
-import AddPhotoIcon from "@material-ui/icons/AddPhotoAlternate";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
 import SendIcon from "@material-ui/icons/Send";
 
 const ChatMessageAdd = (props) => {
-  const { disabled, onSend, ...other } = props;
-  const fileInputRef = useRef(null);
-  const [body, setBody] = useState("");
-
-  const handleAttach = () => {
-    fileInputRef.current.click();
-  };
+  const { disabled, onSend } = props;
+  const [content, setContent] = useState("");
 
   const handleChange = (event) => {
-    setBody(event.target.value);
+    setContent(event.target.value);
   };
 
   const handleSend = () => {
-    if (!body) {
+    if (!content) {
       return;
     }
 
     if (onSend) {
-      onSend(body);
+      onSend(content);
     }
 
-    setBody("");
+    setContent("");
   };
 
   const handleKeyUp = (event) => {
@@ -53,21 +46,14 @@ const ChatMessageAdd = (props) => {
         px: 2,
         py: 1,
       }}
-      {...other}
     >
-      <Hidden smDown>
-        {/* <Avatar
-          sx={{ mr: 2 }}
-          src={user.avatar}
-        /> */}
-      </Hidden>
       <TextField
         disabled={disabled}
         fullWidth
         onChange={handleChange}
         onKeyUp={handleKeyUp}
-        placeholder="Leave a message"
-        value={body}
+        placeholder="Aa"
+        value={content}
         size="small"
         variant="outlined"
       />
@@ -75,33 +61,13 @@ const ChatMessageAdd = (props) => {
         <span>
           <IconButton
             color="primary"
-            disabled={!body || disabled}
+            disabled={!content || disabled}
             onClick={handleSend}
           >
             <SendIcon fontSize="small" />
           </IconButton>
         </span>
       </Tooltip>
-      <Hidden smDown>
-        <Box sx={{ height: 24 }}>
-          <Divider orientation="vertical" />
-        </Box>
-        <Tooltip title="Attach photo">
-          <span>
-            <IconButton disabled={disabled} edge="end" onClick={handleAttach}>
-              <AddPhotoIcon fontSize="small" />
-            </IconButton>
-          </span>
-        </Tooltip>
-        <Tooltip title="Attach file">
-          <span>
-            <IconButton disabled={disabled} edge="end" onClick={handleAttach}>
-              <AttachFileIcon fontSize="small" />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Hidden>
-      <input hidden ref={fileInputRef} type="file" />
     </Box>
   );
 };

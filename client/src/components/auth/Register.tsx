@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Box, Button, Collapse, TextField } from "@material-ui/core";
 import { useRegisterMutation } from "../../generated/graphql";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { scryptPassword } from "../../utils/scryptPassword";
 import { generateKeyPair } from "../../utils/generateKeyPair";
 import { encryptPrivateKey } from "../../utils/encryptPrivateKey";

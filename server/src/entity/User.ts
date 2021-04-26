@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,9 +14,9 @@ import { Message } from "./Message";
 @ObjectType()
 @Entity("users")
 export class User extends BaseEntity {
-  @Field(() => Int)
-  @PrimaryGeneratedColumn()
-  id: number;
+  // @Field(() => Int)
+  // @PrimaryGeneratedColumn()
+  // id: number;
 
   @Field(() => String)
   @PrimaryGeneratedColumn("uuid")
@@ -55,10 +55,16 @@ export class User extends BaseEntity {
   // friends: User[];
 
   @Field(() => [Message])
-  @OneToMany(() => Message, (messages) => messages.fromName, { nullable: true })
+  @OneToMany(() => Message, (messages) => messages.fromName, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   messages: Message[];
 
   @Field(() => [Chat])
-  @ManyToMany(() => Chat, (chat) => chat.uuid, { nullable: true })
+  @ManyToMany(() => Chat, (chat) => chat.members, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   chats: Chat[];
 }

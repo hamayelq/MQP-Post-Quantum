@@ -1,6 +1,7 @@
 import React from "react";
-import { RouteComponentProps } from "react-router";
 
-export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+interface props {}
+
+export const Login: React.FC<props> = () => {
   return <div className="col-lg-8 offset-lg-2"></div>;
 };

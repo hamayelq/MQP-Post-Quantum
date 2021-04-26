@@ -6,15 +6,24 @@ import PencilAltIcon from "../../icons/PencilAlt";
 import Scrollbar from "../Scrollbar";
 import ChatContactSearch from "./ChatContactSearch";
 import ChatThreadList from "./ChatThreadList";
-import { useGetUsersQuery } from "../../generated/graphql";
+import {
+  useCreateChatMutation,
+  useGetChatsQuery,
+  useGetUsersQuery,
+} from "../../generated/graphql";
 
 const ChatSidebar = () => {
   const userUuid = sessionStorage.getItem("userUuid") || "";
-  const { data } = useGetUsersQuery({
-    variables: { uuid: userUuid },
+  const { data: users } = useGetUsersQuery({
+    variables: { uuid: userUuid }, // change uuid to userId
     fetchPolicy: "network-only",
-  }); // network-only not reading from cache, request every time
+  });
+  const { data: chats, refetch: refetchChats } = useGetChatsQuery({
+    variables: { userId: userUuid },
+    fetchPolicy: "network-only",
+  });
 
+  const [createChat] = useCreateChatMutation();
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -26,13 +35,13 @@ const ChatSidebar = () => {
 
   const handleSearchChange = async (event) => {
     const { value } = event.target;
-    const results = data.getUsers;
+    const results = users.getUsers;
 
     setSearchQuery(value);
 
     if (searchQuery) {
       const cleanQuery = searchQuery.toLowerCase().trim();
-      const filteredUsers = results.filter((user) =>
+      const filteredUsers = await results.filter((user) =>
         user.username.toLowerCase().includes(cleanQuery)
       );
       setSearchResults(filteredUsers);
@@ -40,13 +49,31 @@ const ChatSidebar = () => {
   };
 
   const handleSearchFocus = () => {
-    setSearchResults(data.getUsers);
+    setSearchResults(users.getUsers);
     setIsSearchFocused(true);
   };
 
-  const handleSearchSelect = (result) => {
+  const handleSearchSelect = async (result) => {
     setIsSearchFocused(false);
     setSearchQuery("");
+
+    let response;
+    try {
+      response = await createChat({
+        variables: {
+          memberIds: [result.uuid],
+          userId: userUuid,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      console.log(response.data);
+    }
+
+    if (response && response.data) {
+      console.log("Create chat succesful");
+      refetchChats();
+    }
   };
 
   return (
@@ -95,7 +122,7 @@ const ChatSidebar = () => {
       </Hidden>
       <Scrollbar options={{ suppressScrollX: true }}>
         <Box sx={{ display: isSearchFocused ? "none" : undefined }}>
-          <ChatThreadList />
+          <ChatThreadList chats={chats} />
         </Box>
       </Scrollbar>
     </Box>

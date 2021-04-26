@@ -71,10 +71,11 @@ const ChatContactSearch = forwardRef((props, ref) => {
               {results.map((result) => (
                 <ListItem
                   button
-                  key={result.id}
+                  key={result.uuid}
                   onClick={() => handleSelect(result)}
                 >
                   <ListItemText
+                    key={result.uuid}
                     primary={result.username}
                     primaryTypographyProps={{
                       color: "textPrimary",

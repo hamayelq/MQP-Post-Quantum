@@ -1,19 +1,6 @@
-import { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import { Box, Typography } from "@material-ui/core";
 
-const getFilteredSearchResults = (results, recipients) => {
-  const recipientIds = recipients.reduce(
-    (acc, recipient) => [...acc, recipient.id],
-    []
-  );
-
-  return results.filter((result) => !recipientIds.includes(result.id));
-};
-
-const ChatThreadComposer = (props) => {
-  const { onAddRecipient, onRemoveRecipient, recipients, ...other } = props;
-
+const ChatThreadComposer = () => {
   return (
     <Box
       sx={{
@@ -24,7 +11,6 @@ const ChatThreadComposer = (props) => {
         // margin: "auto",
         p: 2,
       }}
-      {...other}
     >
       <Typography color="textSecondary" variant="body1" align="center">
         Select a new contact or an existing chat to begin post quantumly
@@ -34,14 +20,8 @@ const ChatThreadComposer = (props) => {
   );
 };
 
-ChatThreadComposer.propTypes = {
-  onAddRecipient: PropTypes.func,
-  onRemoveRecipient: PropTypes.func,
-  recipients: PropTypes.array,
-};
+ChatThreadComposer.propTypes = {};
 
-ChatThreadComposer.defaultProps = {
-  recipients: [],
-};
+ChatThreadComposer.defaultProps = {};
 
 export default ChatThreadComposer;

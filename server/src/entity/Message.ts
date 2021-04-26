@@ -26,15 +26,15 @@ export class Message extends BaseEntity {
   chat: Chat;
 
   @Field()
-  @Column("text")
+  @Column("text", { nullable: true })
   fromName: string;
 
   @Field()
-  @Column("text")
+  @Column("text", { nullable: true })
   toName: string;
 
   @Field()
-  @Column("text")
+  @Column("text", { nullable: true })
   content: string;
 
   @Field()

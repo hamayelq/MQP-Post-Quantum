@@ -1,15 +1,14 @@
-query GetMessages($chatId: String!) {
-  getMessages(chatId: $chatId) {
-    chat {
+query GetMessages($chatId: String!, $userId: String!) {
+  getMessages(chatId: $chatId, userId: $userId) {
+    uuid
+    messages {
       uuid
-      messages {
+      date
+      content
+      me
+      sender {
         uuid
-        sender {
-          uuid
-          username
-        }
-        content
-        me
+        username
       }
     }
   }

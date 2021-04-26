@@ -1,4 +1,11 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { PubSub, withFilter } from "apollo-server-express";
 import { getRepository } from "typeorm";
 import { Chat } from "../entity/Chat";
@@ -9,15 +16,32 @@ export type contextType = {
   user: User;
 };
 
+@ObjectType()
+class GetMessageResponse {
+  @Field(() => String)
+  uuid: string;
+  @Field(() => String)
+  lastMessage: string;
+  @Field(() => Date)
+  createdAt: Date;
+  @Field(() => Date)
+  updatedAt: Date;
+  @Field(() => [User])
+  members: User[];
+  @Field(() => [Message])
+  messages: Message[];
+}
+
 @Resolver()
 export class MessageResolver {
   @Mutation(() => Boolean)
   async createMessage(
     @Arg("chatId") chatId: string,
     @Arg("content") content: string,
-    // { chatId, content }: { chatId: string; content: string },
-    { user }: contextType
+    @Arg("userId") userId: string
   ) {
+    const user = await User.findOne({ where: { uuid: userId } });
+
     if (!user) {
       throw new Error("createMessage: user unauthorized");
     }
@@ -29,44 +53,79 @@ export class MessageResolver {
     chat.lastMessage = content;
 
     const newMessage = await this.createNewMessage(content, user, chat);
-    await chat.save();
+
+    try {
+      await chat.save();
+    } catch (err) {
+      console.log(err);
+    }
 
     return this.triggerSubscription(chatId, newMessage);
   }
 
   @Mutation(() => Message)
   async createNewMessage(content: string, user: User, chat: Chat) {
-    const message = await Message.create({ content, sender: user, chat });
-    await message.save();
+    const message = Message.create({
+      content,
+      sender: user,
+      fromName: user.username,
+      chat,
+    });
+    try {
+      await message.save();
+    } catch (err) {
+      console.log(err);
+    }
     return message;
   }
 
   @Mutation(() => Boolean)
   async triggerSubscription(chatId: string, message: Message) {
-    pubSub.publish(GET_CHAT_SUB, { getNewMessages: message, chatId });
-    return true;
+    try {
+      pubSub.publish(GET_CHAT_SUB, { getNewMessages: message, chatId });
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
-  @Query(() => [Message])
-  async getMessages(@Arg("chatId") chatId: string, { user }: contextType) {
+  @Query(() => GetMessageResponse)
+  async getMessages(
+    @Arg("chatId") chatId: string,
+    @Arg("userId") userId: string
+  ) {
+    console.log(
+      `getMessages request made by user with uuid ${userId ? userId : "NULL"}`
+    );
+
+    const user = await User.findOne({ where: { uuid: userId } });
+
     if (!user) {
       throw new Error("getMessage: user unauthorized");
     }
 
     let chats: Chat[] = await this.getChatRepo(chatId);
 
-    if (!chats[0].members.some(({ uuid }) => uuid === user.uuid)) {
+    if (!chats[0].members.some(({ uuid }) => uuid === userId)) {
       throw new Error("getMessage: user unauthorized");
     }
 
-    let messages = chats[0].messages.map((message) => {
-      if (message.sender.uuid === user.uuid) return { ...message, me: true };
-      return { ...message, me: false };
-    });
+    let messages: any = [];
 
-    messages.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+    try {
+      messages = chats[0].messages.map((message) => {
+        if (message.sender.uuid === user.uuid) return { ...message, me: true };
+        return { ...message, me: false };
+      });
 
-    return { chat: { ...chats[0], messages } };
+      messages.sort((a: any, b: any) => +new Date(b.date) - +new Date(a.date));
+    } catch (err) {
+      console.log(err);
+    }
+
+    console.log("getMessages succesful");
+    return { ...chats[0], messages };
   }
 
   @Query(() => Chat)
@@ -78,7 +137,6 @@ export class MessageResolver {
     });
   }
 
-  // @Query(() => [Message])
   getNewMessages = () => {
     return withFilter(
       () => pubSub.asyncIterator(GET_CHAT_SUB),

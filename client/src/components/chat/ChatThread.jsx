@@ -1,41 +1,42 @@
 import { Box, Divider } from "@material-ui/core";
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import {
+  useCreateMessageMutation,
+  useGetMessagesQuery,
+} from "../../generated/graphql";
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
-import ChatThreadToolbar from "./ChatThreadToolbar";
-
-const threadSelector = (state) => {
-  const { threads, activeThreadId } = state.chat;
-  const thread = threads.byId[activeThreadId];
-
-  if (thread) {
-    return thread;
-  }
-
-  return {
-    id: null,
-    messages: [],
-    participants: [],
-    unreadMessages: 0,
-  };
-};
 
 const ChatThread = () => {
   const { threadKey } = useParams();
+  const userUuid = sessionStorage.getItem("userUuid") || "";
+  const [createMessage] = useCreateMessageMutation();
+  const { data: messages, refetch: refetchMessages } = useGetMessagesQuery({
+    variables: {
+      chatId: threadKey || "",
+      userId: userUuid,
+    },
+  });
 
   const mode = threadKey ? "DETAIL" : "COMPOSE";
 
-  const handleAddRecipient = (recipient) => {};
-
-  const handleRemoveRecipient = (recipientId) => {};
-
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (content) => {
+    let response;
     try {
-      // Handle send message
+      response = await createMessage({
+        variables: {
+          chatId: threadKey,
+          content: content,
+          userId: userUuid,
+        },
+      });
     } catch (err) {
       console.error(err);
+    }
+
+    if (response && response.data) {
+      console.log("Send message succesful", response.data);
     }
   };
 
@@ -49,24 +50,25 @@ const ChatThread = () => {
         height: "100vh",
       }}
     >
-      {mode === "DETAIL" && <ChatThreadToolbar participants={[]} />}
-      {mode === "COMPOSE" && (
-        <ChatThreadComposer
-          onAddRecipient={handleAddRecipient}
-          onRemoveRecipient={handleRemoveRecipient}
-          recipients={[]}
-        />
+      {mode === "COMPOSE" && <ChatThreadComposer />}
+      {mode === "DETAIL" && (
+        <>
+          <Box
+            sx={{
+              flexGrow: 1,
+              overflow: "auto",
+            }}
+          >
+            {messages && (
+              <ChatMessages
+                messages={[...messages.getMessages.messages].reverse()}
+              />
+            )}
+          </Box>
+          <Divider />
+          <ChatMessageAdd disabled={false} onSend={handleSendMessage} />
+        </>
       )}
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflow: "auto",
-        }}
-      >
-        <ChatMessages messages={[]} participants={[]} />
-      </Box>
-      <Divider />
-      {/* <ChatMessageAdd disabled={false} onSend={handleSendMessage} /> */}
     </Box>
   );
 };

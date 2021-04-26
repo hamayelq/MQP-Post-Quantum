@@ -1,19 +1,29 @@
+import { useState } from "react";
+import { useHistory, useNavigate } from "react-router-dom";
 import { List } from "@material-ui/core";
 import ChatThreadItem from "./ChatThreadItem";
 
-const ChatThreadList = (props) => {
-  const handleSelect = (threadId) => {};
+const ChatThreadList = ({ chats }) => {
+  const [activeThreadId, setActiveThreadId] = useState("");
+  const history = useHistory();
+
+  const handleSelect = (chatId) => {
+    setActiveThreadId(chatId);
+
+    history.push(`/chat/${chatId}`);
+  };
 
   return (
-    <List {...props}>
-      {/* {threads.allIds.map((threadId) => (
-        <ChatThreadItem
-          active={activeThreadId === threadId}
-          key={threadId}
-          onSelect={() => handleSelect(threadId)}
-          thread={threads.byId[threadId]}
-        />
-      ))} */}
+    <List>
+      {chats &&
+        chats.getChats.map((chat) => (
+          <ChatThreadItem
+            active={activeThreadId === chat.uuid}
+            key={chat.uuid}
+            chat={chat}
+            onSelect={() => handleSelect(chat.uuid)}
+          />
+        ))}
     </List>
   );
 };
