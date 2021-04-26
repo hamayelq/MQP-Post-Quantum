@@ -5,6 +5,7 @@ import {
   useCreateMessageMutation,
   useGetMessagesQuery,
 } from "../../generated/graphql";
+import { Typography } from "@material-ui/core";
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
@@ -33,7 +34,11 @@ const ChatThread = () => {
   const { threadKey } = useParams();
   const userUuid = sessionStorage.getItem("userUuid") || "";
   const [createMessage] = useCreateMessageMutation();
-  const { data: messages, refetch: refetchMessages } = useGetMessagesQuery({
+  const {
+    data: messages,
+    refetch: refetchMessages,
+    loading: messagesLoading,
+  } = useGetMessagesQuery({
     variables: {
       chatId: threadKey || "",
       userId: userUuid,
@@ -85,7 +90,28 @@ const ChatThread = () => {
               overflow: "auto",
             }}
           >
-            {messages && (
+            {!messagesLoading && !messages.getMessages && (
+              <Box
+                sx={{
+                  flex: 12,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                  // margin: "auto",
+                  p: 2,
+                }}
+              >
+                <Typography
+                  color="textSecondary"
+                  variant="body1"
+                  align="center"
+                >
+                  Select a new contact or an existing chat to begin post
+                  quantumly communicating :)
+                </Typography>
+              </Box>
+            )}
+            {!messagesLoading && (
               <ChatMessages
                 messages={[...messages.getMessages.messages].reverse()}
               />

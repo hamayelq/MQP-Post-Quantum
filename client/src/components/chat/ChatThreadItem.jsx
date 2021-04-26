@@ -1,17 +1,13 @@
 import PropTypes from "prop-types";
 import {
   Avatar,
-  AvatarGroup,
-  Box,
-  Chip,
-  Hidden,
   ListItem,
   ListItemAvatar,
   ListItemText,
 } from "@material-ui/core";
 
 const ChatThreadItem = (props) => {
-  const { chat, onSelect, active } = props;
+  const { chat, onSelect, active, toggled, mobile } = props;
 
   return (
     <ListItem
@@ -34,7 +30,7 @@ const ChatThreadItem = (props) => {
       >
         <Avatar>{chat.name.toUpperCase().substring(0, 2)}</Avatar>
       </ListItemAvatar>
-      <Hidden smDown>
+      {(toggled || mobile) && (
         <ListItemText
           primary={chat.name}
           primaryTypographyProps={{
@@ -49,27 +45,7 @@ const ChatThreadItem = (props) => {
             variant: "body2",
           }}
         />
-        {/* <Box
-          sx={{
-            alignItems: "flex-end",
-            display: "flex",
-            flexDirection: "column",
-            ml: 2,
-          }}
-        >
-          <Chip
-            color="primary"
-            label={18}
-            size="small"
-            sx={{
-              height: 18,
-              mt: "2px",
-              minWidth: 18,
-              p: "2px",
-            }}
-          />
-        </Box> */}
-      </Hidden>
+      )}
     </ListItem>
   );
 };

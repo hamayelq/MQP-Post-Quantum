@@ -33,8 +33,6 @@ const ChatMessages = (props) => {
       >
         {messages &&
           messages.map((message) => {
-            // const date = new Date(message.date);
-
             return (
               <ChatMessage
                 key={message.uuid}

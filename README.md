@@ -11,10 +11,10 @@
 - Decryption of NTRU Private key complete.
 - Backend chat creation complete.
 - Backend message creation/sending complete.
+- Front end integration of chat creation (user search, then key exchange,
+  & chat 'object' creation in database)
 
 ##### In progress:
 
-- Front end integration of chat creation (user search, then key exchange,
-  & chat 'object' creation in database)
 - Encrypted messaging between users
-  - Succesful integration of graphQL subscriptions from backend
+  - Mostly there, need some final implementation
