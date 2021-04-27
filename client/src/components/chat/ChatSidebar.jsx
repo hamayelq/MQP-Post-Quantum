@@ -17,13 +17,14 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Scrollbar from "../Scrollbar";
 import ChatContactSearch from "./ChatContactSearch";
 import ChatThreadList from "./ChatThreadList";
+import CogIcon from "../../icons/Cog";
 import {
   useCreateChatMutation,
   useGetChatsQuery,
   useGetUsersQuery,
   useLoginMutation,
 } from "../../generated/graphql";
-import { setAccessToken } from "../../accessToken";
+import { deleteStore } from "../../utils/deleteStore";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -70,17 +71,22 @@ const useInterval = (callback, delay) => {
   }, [delay]);
 };
 
-const ChatSidebar = () => {
+const ChatSidebar = ({ handleOpen }) => {
   const userUuid = sessionStorage.getItem("userUuid") || "";
   const userUsername = sessionStorage.getItem("userUsername") || "";
-  const { data: users } = useGetUsersQuery({
+  const { data: users, error: usersError } = useGetUsersQuery({
     variables: { uuid: userUuid }, // change uuid to userId
     fetchPolicy: "network-only",
   });
-  const { data: chats, refetch: refetchChats } = useGetChatsQuery({
+  const {
+    data: chats,
+    refetch: refetchChats,
+    error: chatsError,
+  } = useGetChatsQuery({
     variables: { userId: userUuid },
     fetchPolicy: "network-only",
   });
+
   const [logout, { client }] = useLoginMutation();
   const [createChat] = useCreateChatMutation();
 
@@ -89,30 +95,8 @@ const ChatSidebar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const mobile = useMediaQuery(theme.breakpoints.up("sm"));
-  const { width } = useWindowDimensions();
-  const mobileWidth = width * 0.25;
-  const [drawerWidth, setDrawerWidth] = useState(mobileWidth);
-  const [toggled, setToggled] = useState(false);
-
-  useEffect(() => {
-    setDrawerWidth(mobileWidth);
-  }, [mobileWidth]);
-
-  useEffect(() => {
-    setToggled(false);
-  }, [mobile]);
-
-  const toggleDrawer = () => {
-    if (!toggled) {
-      setDrawerWidth(300);
-      setToggled(true);
-    }
-    if (toggled) {
-      setDrawerWidth(mobileWidth);
-      setToggled(false);
-    }
-  };
+  const mobile = !useMediaQuery(theme.breakpoints.up("sm"));
+  const [openDrawer, setDrawerOpen] = useState(false);
 
   const handleSearchClickAway = () => {
     setIsSearchFocused(false);
@@ -163,22 +147,55 @@ const ChatSidebar = () => {
   };
 
   useInterval(() => {
-    refetchChats();
+    !chatsError && !usersError && refetchChats();
   }, 100);
 
   return (
     <>
-      <Box
-        sx={{
+      {mobile && (
+        <Fab
+          sx={{
+            // backgroundColor: "transparent",
+            margin: (theme) => theme.spacing(1),
+            outline: "none",
+            position: "fixed",
+            zIndex: (theme) => theme.zIndex.speedDial,
+            boxShadow: "none",
+            backgroundColor: (theme) => theme.palette.background.paper,
+          }}
+          disableTouchRipple
+          disableFocusRipple
+          size="small"
+          onClick={() => setDrawerOpen(!openDrawer)}
+        >
+          <MenuIcon color="primary" />
+        </Fab>
+      )}
+      <Drawer
+        open={openDrawer}
+        onClose={() => setDrawerOpen(false)}
+        variant={!mobile ? "permanent" : "temporary"}
+        style={{
           display: "flex",
           backgroundColor: "background.paper",
           borderRight: 1,
           borderColor: "divider",
           flexDirection: "column",
           maxWidth: "100%",
-          width: drawerWidth,
+          width: 262,
         }}
       >
+        {/* <Box
+      // sx={{
+      //   display: "flex",
+      //   backgroundColor: "background.paper",
+      //   borderRight: 1,
+      //   borderColor: "divider",
+      //   flexDirection: "column",
+      //   maxWidth: "100%",
+      //   width: drawerWidth,
+      // }}
+      > */}
         <Box
           sx={{
             alignItems: "center",
@@ -187,46 +204,39 @@ const ChatSidebar = () => {
             px: 2,
           }}
         >
-          <Hidden smUp>
-            <IconButton
-              style={{ backgroundColor: "transparent" }}
-              disableFocusRipple
-              onClick={() => toggleDrawer()}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Hidden>
-
-          {(toggled || mobile) && (
-            <>
-              <Box mr={1} display="inline">
-                <Typography color="textPrimary" variant="h5">
-                  Chats
-                </Typography>
-              </Box>
-              <Typography color="textSecondary" variant="h5">
-                {userUsername}
-              </Typography>
-              <Box sx={{ flexGrow: 1 }} />
-            </>
-          )}
+          <Box mr={1} display="inline">
+            <Typography color="textPrimary" variant="h5">
+              Chats
+            </Typography>
+          </Box>
+          <Typography color="textSecondary" variant="h5">
+            {userUsername.substring(0, 10)}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton style={{ outline: "none" }} onClick={handleOpen}>
+            <CogIcon fontSize="small" />
+          </IconButton>
         </Box>
 
-        <Collapse in={toggled || mobile}>
-          <ChatContactSearch
-            isFocused={isSearchFocused}
-            onChange={handleSearchChange}
-            onClickAway={handleSearchClickAway}
-            onFocus={handleSearchFocus}
-            onSelect={handleSearchSelect}
-            query={searchQuery}
-            results={searchResults || []}
-            style={{ marginBottom: 10 }}
-          />
-        </Collapse>
+        <ChatContactSearch
+          isFocused={isSearchFocused}
+          onChange={handleSearchChange}
+          onClickAway={handleSearchClickAway}
+          onFocus={handleSearchFocus}
+          onSelect={handleSearchSelect}
+          query={searchQuery}
+          results={searchResults || []}
+          style={{ marginBottom: 20 }}
+        />
+
         <Scrollbar options={{ suppressScrollX: true }}>
-          <Box sx={{ display: isSearchFocused ? "none" : undefined }}>
-            <ChatThreadList chats={chats} toggled={toggled} mobile={mobile} />
+          <Box
+            sx={{
+              display: isSearchFocused ? "none" : undefined,
+              overflowY: "auto",
+            }}
+          >
+            <ChatThreadList chats={chats} />
           </Box>
         </Scrollbar>
 
@@ -235,14 +245,15 @@ const ChatSidebar = () => {
           fullWidth
           style={{ borderRadius: 0 }}
           onClick={async () => {
-            // await logout(); // logout
-            // setAccessToken(""); // set access token to null as well
-            // await client.resetStore();
+            await logout(); // logout
+            await client.resetStore({});
+            deleteStore();
           }}
         >
           Logout
         </Button>
-      </Box>
+        {/* </Box> */}
+      </Drawer>
     </>
   );
 };

@@ -12,6 +12,7 @@ export const Register: React.FC<Props> = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [isError, setIsError] = useState(false);
   const [register, { error }] = useRegisterMutation();
 
@@ -19,7 +20,13 @@ export const Register: React.FC<Props> = () => {
 
   const submitForm = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
-    console.log("form submitted");
+
+    const passwordRegex: RegExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setPasswordError(true);
+      return;
+    }
 
     const scryptArray: any = await scryptPassword(password);
     const authKey = scryptArray[0];
@@ -33,9 +40,9 @@ export const Register: React.FC<Props> = () => {
       privateKey,
       encrKey
     );
-    console.log("private key", privateKey);
-    console.log("encrypted private key", encryptedPrivateKey);
-    console.log("public key", publicKeyText);
+    // console.log("private key", privateKey);
+    // console.log("encrypted private key", encryptedPrivateKey);
+    // console.log("public key", publicKeyText);
 
     let response;
     try {
@@ -56,6 +63,8 @@ export const Register: React.FC<Props> = () => {
       console.log(error?.message);
       setIsError(true);
     }
+
+    // console.log("form submitted");
   };
 
   return (
@@ -94,7 +103,10 @@ export const Register: React.FC<Props> = () => {
         margin="normal"
         required
         name="password"
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          setPasswordError(false);
+        }}
         type="password"
         value={password}
         variant="outlined"
@@ -111,6 +123,18 @@ export const Register: React.FC<Props> = () => {
           Register
         </Button>
       </Box>
+
+      <Collapse in={passwordError} mountOnEnter unmountOnExit>
+        <Box sx={{ mt: 2 }}>
+          <Alert severity="error">
+            <div>
+              Make sure your password contains a minimum of eight characters
+              with at least one letter, one number, and one special character.
+            </div>
+          </Alert>
+        </Box>
+      </Collapse>
+
       {error?.message === "exists" && (
         <Collapse in={isError} mountOnEnter unmountOnExit>
           <Box sx={{ mt: 2 }}>

@@ -45,6 +45,12 @@ export class UserResolver {
   // find users in db
   @Query(() => [User])
   async getUsers(@Arg("uuid") uuid: string) {
+    const user = await User.findOne({ where: { uuid: uuid } });
+
+    if (!user) {
+      return [];
+    }
+
     console.log(
       `getUsers request made by user with uuid ${uuid ? uuid : "NULL"}`
     );
@@ -127,10 +133,15 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: MyContext) {
-    sendRefreshToken(res, "");
-    // or
-    // res.clearCookie
-    return true;
+    try {
+      sendRefreshToken(res, "");
+      // or
+      // res.clearCookie
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   // register a user

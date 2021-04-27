@@ -58,9 +58,9 @@ export class ChatResolver {
 
   @Query(() => [Chat])
   async getChats(@Arg("userId") userId: string) {
-    console.log(
-      `getChats request made by user with uuid ${userId ? userId : "NULL"}`
-    );
+    // console.log(
+    //   `getChats request made by user with uuid ${userId ? userId : "NULL"}`
+    // );
 
     try {
       const user = await User.findOne({ where: { uuid: userId } });
@@ -83,7 +83,7 @@ export class ChatResolver {
         }
       }
 
-      console.log("getChats request succesful");
+      // console.log("getChats request succesful");
       return chats;
     } catch (err) {
       console.log(err);

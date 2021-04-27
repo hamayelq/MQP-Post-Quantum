@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { List } from "@material-ui/core";
 import ChatThreadItem from "./ChatThreadItem";
 
-const ChatThreadList = ({ chats, toggled, mobile }) => {
+const ChatThreadList = ({ chats }) => {
   const { threadKey } = useParams();
   const [activeThreadId, setActiveThreadId] = useState(`${threadKey}`);
   let chatsCopy;
@@ -32,8 +32,6 @@ const ChatThreadList = ({ chats, toggled, mobile }) => {
               key={chat.uuid}
               chat={chat}
               onSelect={() => handleSelect(chat.uuid)}
-              toggled={toggled}
-              mobile={mobile}
             />
           ))}
     </List>

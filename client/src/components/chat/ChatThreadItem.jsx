@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 
 const ChatThreadItem = (props) => {
-  const { chat, onSelect, active, toggled, mobile } = props;
+  const { chat, onSelect, active } = props;
 
   return (
     <ListItem
@@ -30,22 +30,21 @@ const ChatThreadItem = (props) => {
       >
         <Avatar>{chat.name.toUpperCase().substring(0, 2)}</Avatar>
       </ListItemAvatar>
-      {(toggled || mobile) && (
-        <ListItemText
-          primary={chat.name}
-          primaryTypographyProps={{
-            color: "textPrimary",
-            noWrap: true,
-            variant: "subtitle2",
-          }}
-          secondary={chat.lastMessage || <i>No messages...</i>}
-          secondaryTypographyProps={{
-            color: "textSecondary",
-            noWrap: true,
-            variant: "body2",
-          }}
-        />
-      )}
+
+      <ListItemText
+        primary={chat.name}
+        primaryTypographyProps={{
+          color: "textPrimary",
+          noWrap: true,
+          variant: "subtitle2",
+        }}
+        secondary={chat.lastMessage || <i>No messages...</i>}
+        secondaryTypographyProps={{
+          color: "textSecondary",
+          noWrap: true,
+          variant: "body2",
+        }}
+      />
     </ListItem>
   );
 };

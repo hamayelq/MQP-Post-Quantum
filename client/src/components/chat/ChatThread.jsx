@@ -9,6 +9,7 @@ import { Typography } from "@material-ui/core";
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
+import Scrollbar from "../Scrollbar";
 
 const useInterval = (callback, delay) => {
   const savedCallback = useRef();
@@ -32,12 +33,14 @@ const useInterval = (callback, delay) => {
 
 const ChatThread = () => {
   const { threadKey } = useParams();
+  const rootRef = useRef(null);
   const userUuid = sessionStorage.getItem("userUuid") || "";
   const [createMessage] = useCreateMessageMutation();
   const {
     data: messages,
     refetch: refetchMessages,
     loading: messagesLoading,
+    error: messagesError,
   } = useGetMessagesQuery({
     variables: {
       chatId: threadKey || "",
@@ -68,7 +71,7 @@ const ChatThread = () => {
   };
 
   useInterval(() => {
-    refetchMessages();
+    !messagesError && refetchMessages();
   }, 100);
 
   return (
@@ -90,27 +93,28 @@ const ChatThread = () => {
               overflow: "auto",
             }}
           >
-            {!messagesLoading && messages.getMessages.messages.length === 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "auto",
-                  p: 2,
-                }}
-              >
-                <Typography
-                  color="textSecondary"
-                  variant="body1"
-                  align="center"
-                  style={{ marginTop: "45vh" }}
+            {!messagesLoading &&
+              !messagesError &&
+              messages.getMessages.messages.length === 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                  }}
                 >
-                  Send a message to your new friend!
-                </Typography>
-              </Box>
-            )}
-            {!messagesLoading && (
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                    align="center"
+                    style={{ marginTop: "45vh" }}
+                  >
+                    Send a message to your new friend!
+                  </Typography>
+                </div>
+              )}
+            {!messagesLoading && !messagesError && (
               <ChatMessages
                 messages={[...messages.getMessages.messages].reverse()}
               />

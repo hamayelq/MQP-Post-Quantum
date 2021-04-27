@@ -39,7 +39,7 @@ const ChatMessages = (props) => {
                 sender={message.sender}
                 content={message.content}
                 me={message.me}
-                createdAt={messages.date}
+                createdAt={message.date}
               />
             );
           })}
