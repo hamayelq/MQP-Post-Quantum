@@ -1,13 +1,8 @@
-import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import PropTypes from "prop-types";
 import { formatDistanceToNowStrict } from "date-fns";
-import { Lightbox } from "react-modal-image";
-import { Avatar, Box, Link, Typography } from "@material-ui/core";
+import { Avatar, Box, Typography } from "@material-ui/core";
 
 const ChatMessage = (props) => {
-  const { content, sender, me, date } = props;
-  const [expandMedia, setExpandMedia] = useState(false);
+  const { content, sender, me, createdAt } = props;
 
   return (
     <Box
@@ -39,7 +34,7 @@ const ChatMessage = (props) => {
             sx={{
               backgroundColor: me ? "primary.main" : "background.paper",
               borderRadius: 1,
-              boxShadow: 1,
+              // boxShadow: 1,
               color: me ? "primary.contrastText" : "text.primary",
               px: 2,
               py: 1,
@@ -61,15 +56,11 @@ const ChatMessage = (props) => {
             }}
           >
             <Typography color="textSecondary" noWrap variant="caption">
-              {/* {formatDistanceToNowStrict(date)} ago */}
-              {date}
+              {formatDistanceToNowStrict(new Date(createdAt))} ago
             </Typography>
           </Box>
         </div>
       </Box>
-      {expandMedia && (
-        <Lightbox large={content} onClose={() => setExpandMedia(true)} />
-      )}
     </Box>
   );
 };

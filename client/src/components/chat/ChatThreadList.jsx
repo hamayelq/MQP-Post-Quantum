@@ -21,7 +21,7 @@ const ChatThreadList = ({ chats }) => {
   };
 
   return (
-    <List>
+    <List style={{ maxWidth: 262 }}>
       {chats &&
         chatsCopy
           .sort((a, b) => new Date(a.updatedAt) - new Date(b.updatedAt))

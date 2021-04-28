@@ -1,35 +1,23 @@
-import { Box, Divider } from "@material-ui/core";
-import { useEffect, useRef } from "react";
+import {
+  Box,
+  Divider,
+  useMediaQuery,
+  useTheme,
+  Typography,
+} from "@material-ui/core";
+import { useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   useCreateMessageMutation,
   useGetMessagesQuery,
 } from "../../generated/graphql";
-import { Typography } from "@material-ui/core";
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
+import { useWindowDimensions } from "../../hooks/useWindowDimensions";
+import { useInterval } from "../../hooks/useInterval";
+import { sample } from "lodash";
 import Scrollbar from "../Scrollbar";
-
-const useInterval = (callback, delay) => {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-};
 
 const ChatThread = () => {
   const { threadKey } = useParams();
@@ -47,6 +35,10 @@ const ChatThread = () => {
       userId: userUuid,
     },
   });
+
+  const { width: windowWidth } = useWindowDimensions();
+  const theme = useTheme();
+  const isMobile = !useMediaQuery(theme.breakpoints.up("sm"));
 
   const mode = threadKey ? "DETAIL" : "COMPOSE";
 
@@ -73,6 +65,18 @@ const ChatThread = () => {
   useInterval(() => {
     !messagesError && refetchMessages();
   }, 100);
+
+  const emoji = sample([
+    "😄",
+    "😎",
+    "😊",
+    "😳",
+    "😅",
+    "👽",
+    "👀",
+    "👻",
+    "🍆😏",
+  ]);
 
   return (
     <Box
@@ -110,15 +114,18 @@ const ChatThread = () => {
                     align="center"
                     style={{ marginTop: "45vh" }}
                   >
-                    Send a message to your new friend!
+                    Send a message to your new friend {emoji}
                   </Typography>
                 </div>
               )}
-            {!messagesLoading && !messagesError && (
-              <ChatMessages
-                messages={[...messages.getMessages.messages].reverse()}
-              />
-            )}
+
+            {!messagesLoading &&
+              !messagesError &&
+              messages.getMessages.messages.length > 0 && (
+                <ChatMessages
+                  messages={[...messages.getMessages.messages].reverse()}
+                />
+              )}
           </Box>
           <Divider />
           <ChatMessageAdd disabled={false} onSend={handleSendMessage} />

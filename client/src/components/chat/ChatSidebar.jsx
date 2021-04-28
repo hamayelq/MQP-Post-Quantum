@@ -26,31 +26,6 @@ import {
 } from "../../generated/graphql";
 import { deleteStore } from "../../utils/deleteStore";
 
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
-
-function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return windowDimensions;
-}
-
 const useInterval = (callback, delay) => {
   const savedCallback = useRef();
 
@@ -94,8 +69,8 @@ const ChatSidebar = ({ handleOpen }) => {
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const mobile = !useMediaQuery(theme.breakpoints.up("sm"));
+  const [searchResults, setSearchResults] = useState([]);
   const [openDrawer, setDrawerOpen] = useState(false);
 
   const handleSearchClickAway = () => {
@@ -181,7 +156,7 @@ const ChatSidebar = ({ handleOpen }) => {
           borderRight: 1,
           borderColor: "divider",
           flexDirection: "column",
-          maxWidth: "100%",
+          // maxWidth: 262,
           width: 262,
         }}
       >
@@ -239,19 +214,21 @@ const ChatSidebar = ({ handleOpen }) => {
             <ChatThreadList chats={chats} />
           </Box>
         </Scrollbar>
-
-        <Button
-          variant="contained"
-          fullWidth
-          style={{ borderRadius: 0 }}
-          onClick={async () => {
-            await logout(); // logout
-            await client.resetStore({});
-            deleteStore();
-          }}
-        >
-          Logout
-        </Button>
+        <Box sx={{ mb: 1, ml: 1, mr: 1 }}>
+          <Button
+            variant="contained"
+            disableElevation
+            fullWidth
+            // style={{ borderRadius: 0 }}
+            onClick={async () => {
+              await logout(); // logout
+              await client.resetStore({});
+              deleteStore();
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
         {/* </Box> */}
       </Drawer>
     </>
