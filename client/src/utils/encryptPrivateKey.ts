@@ -1,16 +1,12 @@
-import { AES, enc } from "crypto-js";
+import { default as aesjs } from "aes-js";
 
 export const encryptPrivateKey = (
-  publicKey: any,
-  privateKey: string,
-  encrKey: string
+  privateKey: Uint8Array,
+  encrArray: Uint8Array
 ) => {
-  /**
-   * Simply encrypting public key with "public" in order to be able
-   * to send to backend, currently backend doesn't like the public key
-   * due to its format
-   */
-  const publicKeyText = AES.encrypt(publicKey, "public").toString();
-  const encryptedPrivateKey = AES.encrypt(privateKey, encrKey).toString();
-  return { encryptedPrivateKey, publicKeyText };
+  const aesCtr = new aesjs.ModeOfOperation.ctr(encrArray);
+  const encryptedBytes = aesCtr.encrypt(privateKey);
+  const encryptedPrivateKey = aesjs.utils.hex.fromBytes(encryptedBytes);
+
+  return encryptedPrivateKey;
 };

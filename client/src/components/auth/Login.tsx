@@ -5,6 +5,7 @@ import { MeQuery, MeDocument, useLoginMutation } from "../../generated/graphql";
 import { useHistory } from "react-router-dom";
 import { scryptPassword } from "../../utils/scryptPassword";
 import { decryptPrivateKey } from "../../utils/decryptPrivateKey";
+import { default as aesjs } from "aes-js";
 
 interface LoginProps {}
 
@@ -17,20 +18,19 @@ export const Login: React.FC<LoginProps> = () => {
   const history = useHistory();
 
   const storeValues = (
-    encrKey: string,
+    encrArray: Uint8Array,
     encryptedPrivateKey: string,
-    publicKeyText: string
+    publicKey: string
   ) => {
-    const { privateKey, publicKey } = decryptPrivateKey(
-      publicKeyText,
-      encryptedPrivateKey,
-      encrKey
-    );
+    const privateKey = decryptPrivateKey(encryptedPrivateKey, encrArray);
     console.log("decrypted private key", privateKey);
 
-    sessionStorage.setItem("ntruPrivateKey", privateKey);
-    sessionStorage.setItem("ntruPublicKey", publicKey);
-    sessionStorage.setItem("encrKey", encrKey);
+    sessionStorage.setItem("privateKey", JSON.stringify(privateKey));
+    sessionStorage.setItem(
+      "publicKey",
+      JSON.stringify(aesjs.utils.hex.toBytes(publicKey))
+    );
+    sessionStorage.setItem("encrArray", JSON.stringify(encrArray));
   };
 
   const submitForm = async (event: React.FormEvent<EventTarget>) => {
@@ -72,7 +72,7 @@ export const Login: React.FC<LoginProps> = () => {
     if (response && response.data) {
       console.log("Login succesful. Data: ", response.data.login);
       const { encryptedPrivateKey, publicKey } = response.data.login;
-      storeValues(encrKey, encryptedPrivateKey, publicKey);
+      storeValues(encrArray, encryptedPrivateKey, publicKey);
       setAccessToken(response.data.login.accessToken);
       history.push("/chat");
     }

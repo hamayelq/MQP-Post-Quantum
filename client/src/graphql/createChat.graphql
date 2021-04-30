@@ -1,3 +1,13 @@
-mutation CreateChat($memberIds: [String!]!, $userId: String!) {
-  createChat(memberIds: $memberIds, userId: $userId)
+mutation CreateChat(
+  $memberIds: [String!]!
+  $userId: String!
+  $sentBySymKey: String!
+  $acceptedBySymKey: String!
+) {
+  createChat(
+    memberIds: $memberIds
+    userId: $userId
+    sentBySymKey: $sentBySymKey
+    acceptedBySymKey: $acceptedBySymKey
+  )
 }

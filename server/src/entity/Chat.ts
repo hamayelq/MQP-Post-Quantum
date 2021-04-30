@@ -32,7 +32,7 @@ export class Chat extends BaseEntity {
   @JoinTable()
   messages: Message[];
 
-  @Field(() => User)
+  @Field(() => [User])
   @JoinTable()
   @ManyToMany(() => User, (member) => member.chats, { onDelete: "CASCADE" })
   members: User[];
@@ -40,6 +40,26 @@ export class Chat extends BaseEntity {
   @Field(() => String)
   @Column({ nullable: true })
   lastMessage: string;
+
+  // pending field, boolean, for friend 'request'
+  @Field(() => Boolean)
+  @Column({ default: true })
+  pendingRequest: boolean;
+
+  // sentByUuid,
+  @Field(() => String)
+  @Column()
+  sentByUuid: string;
+
+  //sentBySymKey
+  @Field(() => String)
+  @Column()
+  sentBySymKey: string;
+
+  //acceptedBySymkey
+  @Field(() => String)
+  @Column()
+  acceptedBySymKey: string;
 
   @Field(() => Date)
   @CreateDateColumn({ name: "createdAt" })

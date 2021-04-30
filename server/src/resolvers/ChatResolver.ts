@@ -12,7 +12,9 @@ export class ChatResolver {
   @Mutation(() => Boolean)
   async createChat(
     @Arg("memberIds", () => [String]) memberIds: string[],
-    @Arg("userId") userId: string
+    @Arg("userId") userId: string,
+    @Arg("sentBySymKey") sentBySymKey: string,
+    @Arg("acceptedBySymKey") acceptedBySymKey: string
   ) {
     try {
       const user = await User.findOne({ where: { uuid: userId } });
@@ -34,7 +36,12 @@ export class ChatResolver {
 
       const members = await this.getUserObject(memberIds);
 
-      return await this.createNewChat([...members, user]);
+      return await this.createNewChat(
+        [...members, user],
+        userId,
+        sentBySymKey,
+        acceptedBySymKey
+      );
     } catch (err) {
       console.log(err);
       return false;
@@ -42,17 +49,70 @@ export class ChatResolver {
   }
 
   @Mutation(() => Boolean)
-  async createNewChat(members: User[]) {
+  async createNewChat(
+    members: User[],
+    userId: string,
+    sentBySymKey: string,
+    acceptedBySymKey: string
+  ) {
     try {
       // const chats: Chat[] = getRepository(Chat);
 
-      const chat = Chat.create({ members: [...members], lastMessage: "" });
+      const chat = Chat.create({
+        members: [...members],
+        lastMessage: "",
+        sentByUuid: userId,
+        sentBySymKey,
+        acceptedBySymKey,
+      });
       await chat.save();
       return true;
     } catch (err) {
       console.log("Save Chat FAILED\n");
       console.log(err);
       return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async acceptRequest(
+    @Arg("chatId") chatId: string,
+    @Arg("encryptedSymKey") encryptedSymKey: string
+  ) {
+    try {
+      const chatRepo = getRepository(Chat);
+      const chatToUpdate: Chat | undefined = await chatRepo.findOne({
+        where: { uuid: chatId },
+      });
+
+      if (!chatToUpdate) throw new Error("Could not find chat to update");
+
+      chatToUpdate.pendingRequest = true;
+      chatToUpdate.acceptedBySymKey = encryptedSymKey;
+
+      await chatRepo.save(chatToUpdate);
+
+      return true;
+    } catch (err) {
+      console.log(err);
+      throw new Error("Error accepting request");
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async denyRequest(@Arg("chatId") chatId: string) {
+    try {
+      const chatRepo = getRepository(Chat);
+      const chatToUpdate: Chat | undefined = await chatRepo.findOne({
+        where: { uuid: chatId },
+      });
+      if (!chatToUpdate) throw new Error("Could not find chat to update");
+
+      await chatRepo.remove(chatToUpdate);
+      return true;
+    } catch (err) {
+      console.log(err);
+      throw new Error("Error deleting request");
     }
   }
 

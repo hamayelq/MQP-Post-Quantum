@@ -31,15 +31,12 @@ export const Register: React.FC<Props> = () => {
     const scryptArray: any = await scryptPassword(password);
     const authKey = scryptArray[0];
     const encrArray = scryptArray[1];
-    const encrKey = new TextDecoder().decode(encrArray);
+    // const encrKey = aesjs.utils.hex.fromBytes(encrArray);
+    // const encrKey = new TextDecoder().decode(encrArray);
 
     const { privateKey, publicKey } = await generateKeyPair();
 
-    const { encryptedPrivateKey, publicKeyText } = encryptPrivateKey(
-      publicKey,
-      privateKey,
-      encrKey
-    );
+    const encryptedPrivateKey = encryptPrivateKey(privateKey, encrArray);
     // console.log("private key", privateKey);
     // console.log("encrypted private key", encryptedPrivateKey);
     // console.log("public key", publicKeyText);
@@ -51,7 +48,7 @@ export const Register: React.FC<Props> = () => {
           email, // CHANGE THIS TO USERNAME, NEED TO CHANGE GRAPHQL SERVER TOO
           username,
           password: authKey,
-          publicKey: publicKeyText,
+          publicKey: publicKey,
           encryptedPrivateKey,
         },
       });

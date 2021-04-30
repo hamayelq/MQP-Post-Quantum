@@ -1,18 +1,25 @@
 import PropTypes from "prop-types";
 import {
   Avatar,
+  IconButton,
   ListItem,
   ListItemAvatar,
+  ListItemSecondaryAction,
   ListItemText,
 } from "@material-ui/core";
+import { useState } from "react";
+import Ban from "../../icons/Ban";
 
 const ChatThreadItem = (props) => {
   const { chat, onSelect, active } = props;
+  const [show, setShow] = useState({ display: "none" });
 
   return (
     <ListItem
       button
       onClick={onSelect}
+      onMouseEnter={() => setShow({ display: "" })}
+      onMouseLeave={() => setShow({ display: "none" })}
       sx={{
         backgroundColor: active && "action.selected",
         boxShadow: (theme) =>
@@ -45,6 +52,20 @@ const ChatThreadItem = (props) => {
           variant: "body2",
         }}
       />
+      <ListItemSecondaryAction>
+        <IconButton
+          style={show}
+          edge="end"
+          // disableFocusRipple
+          // disableRipple
+          disableTouchRipple
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+        >
+          <Ban fontSize="small" />
+        </IconButton>
+      </ListItemSecondaryAction>
     </ListItem>
   );
 };

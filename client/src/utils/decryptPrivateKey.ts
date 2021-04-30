@@ -1,14 +1,12 @@
-import { AES, enc } from "crypto-js";
+import { default as aesjs } from "aes-js";
 
 export const decryptPrivateKey = (
-  publicKeyText: string,
   encryptedPrivateKey: string,
-  encrKey: string
+  encrArray: Uint8Array
 ) => {
-  const privateKey = AES.decrypt(encryptedPrivateKey, encrKey).toString(
-    enc.Utf8
-  );
-  const publicKey = AES.decrypt(publicKeyText, "public").toString(enc.Utf8);
+  const aesCtr = new aesjs.ModeOfOperation.ctr(encrArray);
+  const encryptedBytes = aesjs.utils.hex.toBytes(encryptedPrivateKey);
+  const decryptedBytes = aesCtr.decrypt(encryptedBytes);
 
-  return { privateKey, publicKey };
+  return decryptedBytes;
 };
