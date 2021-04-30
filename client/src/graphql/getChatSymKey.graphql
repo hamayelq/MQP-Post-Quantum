@@ -1,0 +1,5 @@
+query GetChatSymKey($chatId: String!, $userId: String!) {
+  getChatSymKey(chatId: $chatId, userId: $userId) {
+    encryptedSymKey
+  }
+}

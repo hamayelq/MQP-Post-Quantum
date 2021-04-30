@@ -1,4 +1,11 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import { Chat } from "../entity/Chat";
@@ -6,6 +13,12 @@ import { Chat } from "../entity/Chat";
 export type contextType = {
   user: User;
 };
+
+@ObjectType()
+class GetChatSymKeyResponse {
+  @Field(() => String)
+  encryptedSymKey: string;
+}
 
 @Resolver()
 export class ChatResolver {
@@ -113,6 +126,26 @@ export class ChatResolver {
     } catch (err) {
       console.log(err);
       throw new Error("Error deleting request");
+    }
+  }
+
+  @Query(() => GetChatSymKeyResponse)
+  async getChatSymKey(
+    @Arg("chatId") chatId: string,
+    @Arg("userId") userId: string
+  ) {
+    try {
+      const chat = await Chat.findOne({ where: { uuid: chatId } });
+
+      const symKey =
+        chat?.sentByUuid === userId
+          ? chat.sentBySymKey
+          : chat?.acceptedBySymKey;
+
+      return { encryptedSymKey: symKey };
+    } catch (err) {
+      console.log(err);
+      throw new Error("Error getting chat symkey");
     }
   }
 

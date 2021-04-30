@@ -36,7 +36,7 @@ const ChatContactSearch = forwardRef((props, ref) => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <Box ref={ref} sx={{ px: 1 }} {...other}>
+      <Box ref={ref} sx={{ px: 1, width: 262 }} {...other}>
         <Box
           sx={{
             alignItems: "center",

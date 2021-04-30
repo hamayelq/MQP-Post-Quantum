@@ -17,9 +17,10 @@ import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import { decryptEncryptSymKey } from "../../utils/decryptEncryptSymKey";
+import { decryptMessage } from "../../utils/decryptMessage";
 
 const ChatThreadItem = (props) => {
-  const { chat, onSelect, active } = props;
+  const { chat, onSelect, active, symKey } = props;
   const [acceptRequest] = useAcceptRequestMutation();
   const [denyRequest] = useDenyRequestMutation();
   // const [show, setShow] = useState({ display: "none" });
@@ -103,6 +104,8 @@ const ChatThreadItem = (props) => {
     } else return <></>;
   };
 
+  const decryptedLastMessage = decryptMessage(symKey, chat.lastMessage);
+
   return (
     <ListItem
       button
@@ -134,7 +137,7 @@ const ChatThreadItem = (props) => {
           noWrap: true,
           variant: "subtitle2",
         }}
-        secondary={chat.lastMessage || <i>No messages...</i>}
+        secondary={decryptedLastMessage}
         secondaryTypographyProps={{
           color: "textSecondary",
           noWrap: true,

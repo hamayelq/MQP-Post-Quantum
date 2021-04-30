@@ -16,7 +16,7 @@ interface GuardedRouteProps {
 
 const GuardedRoute: React.FC<GuardedRouteProps> = (props) => {
   const { component: Component, exact, path } = props;
-  console.log(getAccessToken());
+  // console.log(getAccessToken());
   const auth = sessionStorage.getItem("userUuid");
 
   if (auth && (path === "/login" || path === "register"))

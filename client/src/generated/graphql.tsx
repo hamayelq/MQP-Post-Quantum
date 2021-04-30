@@ -26,6 +26,7 @@ export type Query = {
   me?: Maybe<User>;
   getMessages: GetMessageResponse;
   getChatRepo: Chat;
+  getChatSymKey: GetChatSymKeyResponse;
   getChats: Array<Chat>;
   getUserObject: Array<User>;
   getUserRepo: User;
@@ -36,6 +37,11 @@ export type QueryGetUsersArgs = {
 };
 
 export type QueryGetMessagesArgs = {
+  userId: Scalars["String"];
+  chatId: Scalars["String"];
+};
+
+export type QueryGetChatSymKeyArgs = {
   userId: Scalars["String"];
   chatId: Scalars["String"];
 };
@@ -90,6 +96,11 @@ export type GetMessageResponse = {
   updatedAt: Scalars["DateTime"];
   members: Array<User>;
   messages: Array<Message>;
+};
+
+export type GetChatSymKeyResponse = {
+  __typename?: "GetChatSymKeyResponse";
+  encryptedSymKey: Scalars["String"];
 };
 
 export type Mutation = {
@@ -199,6 +210,18 @@ export type DenyRequestMutation = { __typename?: "Mutation" } & Pick<
   Mutation,
   "denyRequest"
 >;
+
+export type GetChatSymKeyQueryVariables = Exact<{
+  chatId: Scalars["String"];
+  userId: Scalars["String"];
+}>;
+
+export type GetChatSymKeyQuery = { __typename?: "Query" } & {
+  getChatSymKey: { __typename?: "GetChatSymKeyResponse" } & Pick<
+    GetChatSymKeyResponse,
+    "encryptedSymKey"
+  >;
+};
 
 export type GetChatsQueryVariables = Exact<{
   userId: Scalars["String"];
@@ -536,6 +559,63 @@ export type DenyRequestMutationResult = Apollo.MutationResult<DenyRequestMutatio
 export type DenyRequestMutationOptions = Apollo.BaseMutationOptions<
   DenyRequestMutation,
   DenyRequestMutationVariables
+>;
+export const GetChatSymKeyDocument = gql`
+  query GetChatSymKey($chatId: String!, $userId: String!) {
+    getChatSymKey(chatId: $chatId, userId: $userId) {
+      encryptedSymKey
+    }
+  }
+`;
+
+/**
+ * __useGetChatSymKeyQuery__
+ *
+ * To run a query within a React component, call `useGetChatSymKeyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatSymKeyQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatSymKeyQuery({
+ *   variables: {
+ *      chatId: // value for 'chatId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetChatSymKeyQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetChatSymKeyQuery,
+    GetChatSymKeyQueryVariables
+  >
+) {
+  return Apollo.useQuery<GetChatSymKeyQuery, GetChatSymKeyQueryVariables>(
+    GetChatSymKeyDocument,
+    baseOptions
+  );
+}
+export function useGetChatSymKeyLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetChatSymKeyQuery,
+    GetChatSymKeyQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<GetChatSymKeyQuery, GetChatSymKeyQueryVariables>(
+    GetChatSymKeyDocument,
+    baseOptions
+  );
+}
+export type GetChatSymKeyQueryHookResult = ReturnType<
+  typeof useGetChatSymKeyQuery
+>;
+export type GetChatSymKeyLazyQueryHookResult = ReturnType<
+  typeof useGetChatSymKeyLazyQuery
+>;
+export type GetChatSymKeyQueryResult = Apollo.QueryResult<
+  GetChatSymKeyQuery,
+  GetChatSymKeyQueryVariables
 >;
 export const GetChatsDocument = gql`
   query GetChats($userId: String!) {

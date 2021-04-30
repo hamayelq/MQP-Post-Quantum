@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { decryptMessage } from "../../utils/decryptMessage";
+
 import PropTypes from "prop-types";
 import { Box, useMediaQuery, useTheme } from "@material-ui/core";
 // import useAuth from "../../../hooks/useAuth";
@@ -31,7 +33,16 @@ function useWindowDimensions() {
 }
 
 const ChatMessages = (props) => {
-  const { messages } = props;
+  const { messages, chatId, symKey } = props;
+  const userUuid = sessionStorage.getItem("userUuid");
+
+  // const { data: encryptedSymKey } = useGetChatSymKeyQuery({
+  //   variables: { chatId: chatId, userId: userUuid },
+  //   fetchPolicy: "network-only",
+  // });
+
+  // console.log(encryptedSymKey);
+
   const rootRef = useRef(null);
   const { width: windowWidth } = useWindowDimensions();
   const theme = useTheme();
@@ -64,11 +75,12 @@ const ChatMessages = (props) => {
       >
         {messages &&
           messages.map((message) => {
+            const decryptedMessage = decryptMessage(symKey, message.content);
             return (
               <ChatMessage
                 key={message.uuid}
                 sender={message.sender}
-                content={message.content}
+                content={decryptedMessage}
                 me={message.me}
                 createdAt={message.date}
               />

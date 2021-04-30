@@ -1,16 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Button,
   Fab,
   Drawer,
-  Hidden,
   IconButton,
-  makeStyles,
   Typography,
   useTheme,
-  Collapse,
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -48,7 +44,12 @@ const useInterval = (callback, delay) => {
   }, [delay]);
 };
 
-const ChatSidebar = ({ handleOpen }) => {
+const ChatSidebar = ({
+  handleOpen,
+  activeThreadId,
+  handleChatSelect,
+  symKey,
+}) => {
   const userUuid = sessionStorage.getItem("userUuid") || "";
   const userUsername = sessionStorage.getItem("userUsername") || "";
   const { data: users, error: usersError } = useGetUsersQuery({
@@ -224,7 +225,12 @@ const ChatSidebar = ({ handleOpen }) => {
               overflowY: "auto",
             }}
           >
-            <ChatThreadList chats={chats} />
+            <ChatThreadList
+              chats={chats}
+              activeThreadId={activeThreadId}
+              handleSelect={handleChatSelect}
+              symKey={symKey}
+            />
           </Box>
         </Scrollbar>
         <Box sx={{ mb: 1, ml: 1, mr: 1 }}>

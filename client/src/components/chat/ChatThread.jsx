@@ -1,11 +1,4 @@
-import {
-  Box,
-  Divider,
-  useMediaQuery,
-  useTheme,
-  Typography,
-} from "@material-ui/core";
-import { useRef } from "react";
+import { Box, Divider, useTheme, Typography } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import {
   useCreateMessageMutation,
@@ -14,14 +7,12 @@ import {
 import ChatMessageAdd from "./ChatMessageAdd";
 import ChatMessages from "./ChatMessages";
 import ChatThreadComposer from "./ChatThreadComposer";
-import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import { useInterval } from "../../hooks/useInterval";
 import { sample } from "lodash";
-import Scrollbar from "../Scrollbar";
+import { encryptMessage } from "../../utils/encryptMessage";
 
-const ChatThread = () => {
+const ChatThread = ({ symKey }) => {
   const { threadKey } = useParams();
-  const rootRef = useRef(null);
   const userUuid = sessionStorage.getItem("userUuid") || "";
   const [createMessage] = useCreateMessageMutation();
   const {
@@ -36,19 +27,17 @@ const ChatThread = () => {
     },
   });
 
-  const { width: windowWidth } = useWindowDimensions();
-  const theme = useTheme();
-  const isMobile = !useMediaQuery(theme.breakpoints.up("sm"));
-
   const mode = threadKey ? "DETAIL" : "COMPOSE";
 
   const handleSendMessage = async (content) => {
+    const encryptedMessage = encryptMessage(symKey, content);
+
     let response;
     try {
       response = await createMessage({
         variables: {
           chatId: threadKey,
-          content: content,
+          content: encryptedMessage,
           userId: userUuid,
         },
       });
@@ -114,11 +103,15 @@ const ChatThread = () => {
               messages.getMessages.messages.length > 0 && (
                 <ChatMessages
                   messages={[...messages.getMessages.messages].reverse()}
+                  chatId={threadKey}
+                  symKey={symKey}
                 />
               )}
           </Box>
           <Divider />
-          <ChatMessageAdd disabled={false} onSend={handleSendMessage} />
+          {symKey.length > 0 && (
+            <ChatMessageAdd disabled={false} onSend={handleSendMessage} />
+          )}
         </>
       )}
     </Box>
