@@ -87,7 +87,7 @@ export class ChatResolver {
 
       if (!chatToUpdate) throw new Error("Could not find chat to update");
 
-      chatToUpdate.pendingRequest = true;
+      chatToUpdate.pendingRequest = false;
       chatToUpdate.acceptedBySymKey = encryptedSymKey;
 
       await chatRepo.save(chatToUpdate);

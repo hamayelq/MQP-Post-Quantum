@@ -7,5 +7,5 @@ export const deleteStore = () => {
   sessionStorage.removeItem("userUsername");
   sessionStorage.removeItem("ntruPublicKey");
   sessionStorage.removeItem("ntruPrivateKey");
-  sessionStorage.removeItem("encrKey");
+  sessionStorage.removeItem("encrArray");
 };

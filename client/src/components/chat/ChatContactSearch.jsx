@@ -7,9 +7,11 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemSecondaryAction,
   ListItemText,
   Typography,
 } from "@material-ui/core";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import SearchIcon from "../../icons/Search";
 
 const ChatContactSearch = forwardRef((props, ref) => {
@@ -83,6 +85,9 @@ const ChatContactSearch = forwardRef((props, ref) => {
                       variant: "subtitle2",
                     }}
                   />
+                  <ListItemSecondaryAction>
+                    <PersonAddIcon color="primary" fontSize="small" />
+                  </ListItemSecondaryAction>
                 </ListItem>
               ))}
               {results.length === 0 && (

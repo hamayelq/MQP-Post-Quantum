@@ -2,5 +2,6 @@ query GetUsers($uuid: String!) {
   getUsers(uuid: $uuid) {
     uuid
     username
+    publicKey
   }
 }

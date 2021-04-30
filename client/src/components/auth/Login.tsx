@@ -40,7 +40,7 @@ export const Login: React.FC<LoginProps> = () => {
     const scryptArray: any = await scryptPassword(password);
     const authKey = scryptArray[0];
     const encrArray = scryptArray[1];
-    const encrKey = new TextDecoder().decode(encrArray);
+    // const encrKey = new TextDecoder().decode(encrArray);
 
     let response;
     try {

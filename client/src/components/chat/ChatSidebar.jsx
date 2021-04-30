@@ -22,9 +22,11 @@ import {
   useCreateChatMutation,
   useGetChatsQuery,
   useGetUsersQuery,
-  useLoginMutation,
+  useLogoutMutation,
 } from "../../generated/graphql";
 import { deleteStore } from "../../utils/deleteStore";
+import { getUsersKeys } from "../../utils/getUsersKeys";
+import { generateEncryptedSymKeys } from "../../utils/generateEncryptedSymKeys";
 
 const useInterval = (callback, delay) => {
   const savedCallback = useRef();
@@ -62,7 +64,7 @@ const ChatSidebar = ({ handleOpen }) => {
     fetchPolicy: "network-only",
   });
 
-  const [logout, { client }] = useLoginMutation();
+  const [logout, { client }] = useLogoutMutation();
   const [createChat] = useCreateChatMutation();
 
   const theme = useTheme();
@@ -102,12 +104,23 @@ const ChatSidebar = ({ handleOpen }) => {
     setIsSearchFocused(false);
     setSearchQuery("");
 
+    const { encrArray, friendPublicKey } = getUsersKeys(result.publicKey);
+
+    // console.log(encrArray, friendPublicKey);
+
+    const {
+      encryptedSentBySymKey,
+      encryptedAcceptedBySymKey,
+    } = generateEncryptedSymKeys(encrArray, friendPublicKey);
+
     let response;
     try {
       response = await createChat({
         variables: {
           memberIds: [result.uuid],
           userId: userUuid,
+          sentBySymKey: encryptedSentBySymKey,
+          acceptedBySymKey: encryptedAcceptedBySymKey,
         },
       });
     } catch (err) {

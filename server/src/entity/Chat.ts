@@ -53,12 +53,12 @@ export class Chat extends BaseEntity {
 
   //sentBySymKey
   @Field(() => String)
-  @Column()
+  @Column({ default: "" })
   sentBySymKey: string;
 
   //acceptedBySymkey
   @Field(() => String)
-  @Column()
+  @Column({ default: "" })
   acceptedBySymKey: string;
 
   @Field(() => Date)

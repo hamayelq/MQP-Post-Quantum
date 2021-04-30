@@ -1,0 +1,3 @@
+mutation DenyRequest($chatId: String!) {
+  denyRequest(chatId: $chatId)
+}

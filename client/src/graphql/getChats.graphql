@@ -2,7 +2,11 @@ query GetChats($userId: String!) {
   getChats(userId: $userId) {
     uuid
     name
+    sentByUuid
     lastMessage
+    pendingRequest
+    sentBySymKey
+    acceptedBySymKey
     updatedAt
     members {
       uuid

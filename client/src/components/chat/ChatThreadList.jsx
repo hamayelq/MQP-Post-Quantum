@@ -14,10 +14,14 @@ const ChatThreadList = ({ chats }) => {
     chatsCopy = [...chats.getChats];
   }
 
-  const handleSelect = (chatId) => {
-    setActiveThreadId(chatId);
+  const handleSelect = (chat) => {
+    if (!chat.pendingRequest) {
+      setActiveThreadId(chat.uuid);
 
-    history.push(`/chat/${chatId}`);
+      console.log(chat);
+
+      history.push(`/chat/${chat.uuid}`);
+    }
   };
 
   return (
@@ -31,7 +35,7 @@ const ChatThreadList = ({ chats }) => {
               active={activeThreadId === chat.uuid}
               key={chat.uuid}
               chat={chat}
-              onSelect={() => handleSelect(chat.uuid)}
+              onSelect={() => handleSelect(chat)}
             />
           ))}
     </List>

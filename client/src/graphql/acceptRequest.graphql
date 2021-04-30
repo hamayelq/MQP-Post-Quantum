@@ -1,0 +1,3 @@
+mutation AcceptRequest($chatId: String!, $encryptedSymKey: String!) {
+  acceptRequest(chatId: $chatId, encryptedSymKey: $encryptedSymKey)
+}

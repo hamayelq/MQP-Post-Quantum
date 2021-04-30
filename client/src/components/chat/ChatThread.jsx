@@ -66,17 +66,7 @@ const ChatThread = () => {
     !messagesError && refetchMessages();
   }, 100);
 
-  const emoji = sample([
-    "😄",
-    "😎",
-    "😊",
-    "😳",
-    "😅",
-    "👽",
-    "👀",
-    "👻",
-    "🍆😏",
-  ]);
+  const emoji = sample(["😄", "😎", "😊", "😳", "😅", "👽", "👀", "👻"]);
 
   return (
     <Box
