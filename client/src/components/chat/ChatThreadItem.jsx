@@ -18,14 +18,20 @@ import CloseIcon from "@material-ui/icons/Close";
 import PauseCircleFilledIcon from "@material-ui/icons/PauseCircleFilled";
 import { decryptEncryptSymKey } from "../../utils/decryptEncryptSymKey";
 import { decryptMessage } from "../../utils/decryptMessage";
+import { decryptSymKey } from "../../utils/decryptSymKey";
 
 const ChatThreadItem = (props) => {
-  const { chat, onSelect, active, symKey } = props;
+  const { chat, onSelect, active } = props;
   const [acceptRequest] = useAcceptRequestMutation();
   const [denyRequest] = useDenyRequestMutation();
-  // const [show, setShow] = useState({ display: "none" });
 
   const userUuid = sessionStorage.getItem("userUuid");
+
+  const symKey =
+    chat?.sentByUuid === userUuid ? chat.sentBySymKey : chat?.acceptedBySymKey;
+
+  const { decryptedSymKeyBytes } = decryptSymKey(symKey);
+  // const [show, setShow] = useState({ display: "none" });
 
   const handleAcceptRequest = async () => {
     const encryptedSymKey = decryptEncryptSymKey(chat.acceptedBySymKey);
@@ -104,7 +110,9 @@ const ChatThreadItem = (props) => {
     } else return <></>;
   };
 
-  const decryptedLastMessage = decryptMessage(symKey, chat.lastMessage);
+  const decryptedLastMessage = chat.lastMessage
+    ? decryptMessage(decryptedSymKeyBytes, chat.lastMessage)
+    : "No messages...";
 
   return (
     <ListItem

@@ -1,8 +1,10 @@
 # Post Quantum Communication Application
 
-#### Repository for my Major Qualifying Project. More to come :)
+#### Repository for my Major Qualifying Project.
 
 ##### Completed:
+
+###### This project is complete :) However, it will be going through some pretty major overhauls in the near future
 
 - Login and registration process complete.
 - NTRU key generation complete.
@@ -13,8 +15,5 @@
 - Backend message creation/sending complete.
 - Front end integration of chat creation (user search, then key exchange,
   & chat 'object' creation in database)
-
-##### In progress:
-
-- Encrypted messaging between users
-  - Mostly there, need some final implementation
+- User - friend relationship
+- E2E encryption

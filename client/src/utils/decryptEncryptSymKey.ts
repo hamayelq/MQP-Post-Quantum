@@ -4,7 +4,7 @@ export const decryptEncryptSymKey = (symKey: string) => {
   const symKeyBytes = aesjs.utils.hex.toBytes(symKey);
   const privateKeyBytes: any = Object.values(
     JSON.parse(sessionStorage.getItem("privateKey")!)
-  ).slice(300, 316);
+  ).slice(300, 332);
   const encrArray: any = Object.values(
     JSON.parse(sessionStorage.getItem("encrArray")!)
   );
