@@ -14,10 +14,6 @@ import { Message } from "./Message";
 @ObjectType()
 @Entity("users")
 export class User extends BaseEntity {
-  // @Field(() => Int)
-  // @PrimaryGeneratedColumn()
-  // id: number;
-
   @Field(() => String)
   @PrimaryGeneratedColumn("uuid")
   uuid: string;
@@ -41,7 +37,6 @@ export class User extends BaseEntity {
   email: string;
 
   // no @Field() here as to not expose password
-  // @Field()
   @Column("text")
   password: string;
 
@@ -49,10 +44,6 @@ export class User extends BaseEntity {
      upon token refresh */
   @Column("int", { default: 0 })
   tokenVersion: number;
-
-  // @Field(() => [User])
-  // @OneToMany(() => User, (user) => user.id)
-  // friends: User[];
 
   @Field(() => [Message])
   @OneToMany(() => Message, (messages) => messages.fromName, {

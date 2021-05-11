@@ -95,10 +95,6 @@ export class MessageResolver {
     @Arg("chatId") chatId: string,
     @Arg("userId") userId: string
   ) {
-    // console.log(
-    //   `getMessages request made by user with uuid ${userId ? userId : "NULL"}`
-    // );
-
     const user = await User.findOne({ where: { uuid: userId } });
 
     if (!user) {
@@ -124,7 +120,6 @@ export class MessageResolver {
       console.log(err);
     }
 
-    // console.log("getMessages succesful");
     return { ...chats[0], messages };
   }
 

@@ -119,7 +119,7 @@ export const Login: React.FC<LoginProps> = () => {
           variant="contained"
           disabled={!username || !password}
         >
-          Log In
+          Login
         </Button>
       </Box>
       <Box sx={{ mt: 2 }}>

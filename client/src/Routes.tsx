@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { getAccessToken } from "./accessToken";
 import { Bye } from "./views/auth/Bye";
 import { LoginView } from "./views/authentication/LoginView";
 import { RegisterView } from "./views/authentication/RegisterView";
@@ -16,7 +15,6 @@ interface GuardedRouteProps {
 
 const GuardedRoute: React.FC<GuardedRouteProps> = (props) => {
   const { component: Component, exact, path } = props;
-  // console.log(getAccessToken());
   const auth = sessionStorage.getItem("userUuid");
 
   if (auth && (path === "/login" || path === "register"))

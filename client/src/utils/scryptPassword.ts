@@ -1,11 +1,5 @@
 import { scrypt } from "scrypt-js";
 
-/**
- *
- * @param password plaintext password
- * @param type string, login or registration
- * @returns either an array with authKey and encryption array or just authKey
- */
 export const scryptPassword = async (password: string): Promise<any> => {
   const passwordArray: Uint8Array = new TextEncoder().encode(password);
 
@@ -19,12 +13,10 @@ export const scryptPassword = async (password: string): Promise<any> => {
     1,
     32
   );
-  // console.log("Hashed password", hashedPassword);
 
   const firstHalf = hashedPassword.slice(0, 16);
   const lastHalf = hashedPassword.slice(16, 32);
 
   const scryptedPassword: string = new TextDecoder().decode(lastHalf);
-  // console.log(scryptedPassword);
   return [scryptedPassword, firstHalf];
 };

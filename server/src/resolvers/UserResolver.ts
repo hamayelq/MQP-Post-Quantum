@@ -96,7 +96,7 @@ export class UserResolver {
   // login a user
   @Mutation(() => LoginResponse) // returns LoginResponse
   async login(
-    @Arg("username") username: string, // ('') name of graphQL arg, username = variable name, string = type
+    @Arg("username") username: string,
     @Arg("password") password: string,
     @Ctx() { res }: MyContext
   ): Promise<LoginResponse> {
@@ -148,12 +148,12 @@ export class UserResolver {
   @Mutation(() => Boolean) // returns boolean, true worked
   async register(
     @Arg("email") email: string,
-    @Arg("username") username: string, // ('') name of graphQL arg, username = variable name, string = type
+    @Arg("username") username: string,
     @Arg("password") password: string,
     @Arg("publicKey") publicKey: string,
     @Arg("encryptedPrivateKey") encryptedPrivateKey: string
   ) {
-    const hashedPassword = await hash(password, 12); // technically authentication key, hash again after hashed from client
+    const hashedPassword = await hash(password, 12);
 
     const userByName = await User.findOne({ where: { username } });
     const userByEmail = await User.findOne({ where: { email } });

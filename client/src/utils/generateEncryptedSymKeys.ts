@@ -5,7 +5,7 @@ export const generateEncryptedSymKeys = (
   userEncryptionArr: Uint8Array,
   friendPublicKey: Uint8Array
 ) => {
-  const symKey = randomBytes(16);
+  const symKey = randomBytes(32);
 
   console.log("Sym key", symKey);
 

@@ -69,8 +69,6 @@ export class ChatResolver {
     acceptedBySymKey: string
   ) {
     try {
-      // const chats: Chat[] = getRepository(Chat);
-
       const chat = Chat.create({
         members: [...members],
         lastMessage: "",
@@ -151,10 +149,6 @@ export class ChatResolver {
 
   @Query(() => [Chat])
   async getChats(@Arg("userId") userId: string) {
-    // console.log(
-    //   `getChats request made by user with uuid ${userId ? userId : "NULL"}`
-    // );
-
     try {
       const user = await User.findOne({ where: { uuid: userId } });
 
