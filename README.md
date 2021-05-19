@@ -18,5 +18,10 @@
 - User - friend relationship
 - E2E encryption
 
+##### In Progress:
+
+- Refactor remaining JavaScript code to TypeScript
+- Fix WebSocket and GraphQL subscriptions, move away from polling
+
 A link to the research and development process behind this project:
 https://eprojects.wpi.edu/system/files/project-files/2021/05/hqureshi_mqp_pqcrypt_2021.pdf
